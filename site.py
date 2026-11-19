@@ -17,7 +17,6 @@ DATA = json.loads((ROOT / 'content/business.json').read_text())
 ORIGIN = DATA['canonical']
 ADS = '/vending-machine-advertising-malaysia/'
 MACHINES = '/services.html'
-PORTAL = 'https://app.vendbi.com/ops/'
 WA = 'https://wa.me/' + DATA['whatsapp']
 EMAIL = 'mailto:' + DATA['email']
 ARTICLES = sorted(
@@ -35,18 +34,39 @@ def page(path, title, description, body, service=None, article=None, index=True)
     PAGES[path] = (title, description, body, service, article, index)
 
 
-def intro(kicker, title, description, action=''):
-    return f'<section class="intro"><div class="wrap"><p class="eyebrow">{kicker}</p><h1>{title}</h1><p class="lead">{description}</p>{action}</div></section>'
+PHOTO_DESCRIPTIONS = {'collection.webp': 'Shopper collecting a chilled can from a vending tray',
+ 'restocking.webp': 'Operator refilling a row of chilled drinks',
+ 'site-survey.webp': 'Building managers assessing a lobby for vending placement',
+ 'office-pantry.webp': 'Colleagues choosing drinks during an office pantry break',
+ 'fleet-review.webp': 'Operator reviewing stock and sales on a tablet, illustrative screen',
+ 'pack-fit.webp': 'Drink packs and measuring tape for a vending fit check',
+ 'energy-check.webp': 'Checking power consumption at a refrigerated cabinet',
+ 'cost-review.webp': 'Planning machine costs with receipts and a calculator',
+ 'creative-studio.webp': 'Preparing a beverage photograph for a screen campaign',
+ 'full-touchscreen.webp': 'Vendvision full-front touchscreen machine in two catalogue views',
+ 'extracted-p2-0.jpeg': 'The Vendvision team',
+ 'founder.jpg': 'Melvin Chan, Vendvision founder',
+ 'v22-lobby-560.webp': 'V22 vending machine in an illustrative lobby campaign'}
+
+def photo(filename, eager=False):
+    loading = 'eager' if eager else 'lazy'
+    return f'<img src="/assets/{filename}" alt="{escape(PHOTO_DESCRIPTIONS[filename])}" loading="{loading}" decoding="async">'
+
+
+def intro(kicker, title, description, action='', image=None):
+    copy = f'<div class="intro-copy"><p class="eyebrow">{kicker}</p><h1>{title}</h1><p class="lead">{description}</p>{action}</div>'
+    visual = f'<figure class="intro-photo">{photo(image, eager=True)}</figure>' if image else ''
+    return f'<section class="intro"><div class="wrap">{copy}{visual}</div></section>'
 
 
 def section(title, body, tone='', anchor=''):
     return f'<section class="section {tone}"{f" id={chr(34)}{anchor}{chr(34)}" if anchor else ""}><div class="wrap"><h2>{title}</h2>{body}</div></section>'
 
 
-def cards(items):
+def cards(items, images=()):
     return '<div class="cards">' + ''.join(
-        f'<article class="card"><h3>{title}</h3><p>{description}</p>{link}</article>'
-        for title, description, link in items
+        f'<article class="card">{photo(images[i]) if images else ""}<h3>{title}</h3><p>{description}</p>{link}</article>'
+        for i, (title, description, link) in enumerate(items)
     ) + '</div>'
 
 
@@ -99,7 +119,7 @@ def campaign_image(hero=False):
         srcset="/assets/v22-lobby-560.webp 560w, /assets/v22-lobby-1120.webp 1120w"
         sizes="(max-width: 760px) calc(100vw - 36px), 560px" width="1120" height="1400"
         alt="Vendvision V22 with a fuchsia wrap and a beverage ad on its right-hand touchscreen in an illustrative office lobby"
-        {loading}><figcaption>Vendvision V22 in an illustrative beverage campaign</figcaption></figure>'''
+        {loading}><figcaption>V22  /  Illustrative beverage campaign</figcaption></figure>'''
 
 
 def insight_url(slug):
@@ -119,7 +139,7 @@ def make_pages():
          f'''<section class="home-hero"><div class="wrap hero-grid"><div class="hero-copy">
          <p class="eyebrow">Vendvision Brand Network</p>
          <h1>Seen on screen.<br><em>Bought on site.</em></h1>
-         <p class="lead">Reach shoppers at vending machines in Malaysia. Run a screen ad, put your product on sale, or do both at the same location.</p>
+         <p class="lead">Bring your brand to vending machines across Malaysia. Reach shoppers on screen, then put your product within reach.</p>
          <div class="actions">{button('Plan a campaign', ADS)}{button('Explore vending machines', MACHINES, True)}</div>
          <div class="hero-partners">{link('For vending operators', '/operators/')}{link('Propose a vending location', '/propose-a-site/')}</div>
          </div>{campaign_image(hero=True)}</div></section>''' +
@@ -127,20 +147,20 @@ def make_pages():
              ('Screen advertising', 'Run creative on screens at participating machines. Choose target areas, venue types and campaign dates.', link('Explore screen advertising', ADS + '#formats')),
              ('Product placement', 'Put a suitable drink or snack on sale in a participating machine. Confirm pack fit, temperature and restocking.', link('Explore product placement', ADS + '#formats')),
              ('Combined campaigns', 'Show the campaign and stock the featured product at the same machine so shoppers can buy on the spot.', link('See a campaign example', ADS + '#example'))
-         ])) +
-         section('Buying a vending machine?', '<p>Compare the V22 and 50SP, review capacity and payment options, and request a quote for your product mix and site.</p>' + button('Compare models', MACHINES), 'brand-band') +
+         ], ('creative-studio.webp', 'pack-fit.webp', 'collection.webp'))) +
+         section('Find your next machine.', '<p>Compare the V22 and 50SP to find the right fit for your products, payment setup and floor space.</p>' + button('Compare vending machines', MACHINES) + '<figure class="catalogue-shot"><img src="/assets/side-touchscreen.webp" loading="lazy" width="456" height="640" alt="Side touchscreen vending machine with a glass product display"></figure>', 'brand-band') +
          section('Work with Vendvision', cards([
              ('Vending operators', 'Put existing machines forward for campaign review.', link('Check machine eligibility', '/operators/')),
              ('Locations and corporate pantries', 'Submit a property or request an office pantry proposal.', link('Explore location options', '/locations/')),
              ('VendBI software', 'Monitor sales, stock and machine status across your operation.', link('Explore VendBI', '/vendbi/'))
-         ])))
+         ], ('restocking.webp', 'site-survey.webp', 'fleet-review.webp'))))
 
     example = DATA['campaign_example']
     page(ADS, 'Vending Machine Advertising in Malaysia | Vendvision',
          'Book screen advertising, product placement or combined vending campaigns with Vendvision. Explore formats and request a Klang Valley campaign plan.',
          intro('Brands & agencies', 'Vending machine advertising in Malaysia',
-               'Reach shoppers at the vending machine. Tell the Vendvision Brand Network who you want to reach, where and when. We’ll check which operators can offer screen space, product slots or both.',
-               button('Request a campaign plan', '#campaign-plan')) +
+               'Run a screen ad, stock a product, or combine both. Share your audience, dates and preferred locations.',
+               button('Request a campaign plan', '#campaign-plan'), image='creative-studio.webp') +
          section('Choose your campaign format', cards([
              ('Screen advertising', 'Run your creative on participating vending screens. Ask for a shortlist by area and venue type, with screen specifications and reporting options for each site.', ''),
              ('Product placement', 'Put a drink or snack on sale. We check pack dimensions, storage temperature, available slots and restocking arrangements with the operator.', ''),
@@ -181,7 +201,7 @@ def make_pages():
          'Compare Vendvision V22 and 50SP vending machines in Malaysia, including capacity, dimensions, refrigeration and payment options. Request an itemised quote.',
          intro('Machine supply & support', 'Smart vending machines in Malaysia',
                'Compare two touchscreen models for drinks and snacks. Tell us what you plan to sell and where, and we’ll check the right configuration for your site.',
-               button('Request a machine quote', '#machine-quote')) +
+               button('Request a machine quote', '#machine-quote'), image='full-touchscreen.webp') +
          section('Compare the V22 and 50SP', '<div class="model-grid">' + images + '</div>'
                  '<div class="table-wrap" role="region" aria-label="Machine comparison" tabindex="0"><table><caption>Published specifications</caption>'
                  f'<thead><tr><th scope="col">Specification</th>{headings}</tr></thead><tbody>{rows}</tbody></table></div>'
@@ -199,8 +219,8 @@ def make_pages():
     page('/operators/', 'Vending Operator Partnerships | Vendvision Brand Network',
          'Put forward vending machines for screen advertising and product placement in Malaysia. Check eligibility and learn how campaigns are agreed.',
          intro('For vending operators', 'Put your machines forward for VBN',
-               'If you operate vending machines in Malaysia, share your fleet details. Vendvision checks which machines may fit a brand’s screen or product campaign.',
-               button('Check my machines’ eligibility', '#operator-form')) +
+               'Put your screens and product slots forward for brand campaigns in Malaysia.',
+               button('Check my machines’ eligibility', '#operator-form'), image='restocking.webp') +
          section('How eligibility and booking work', steps([
              ('Share your fleet details', 'Tell us the number of machines, operating areas, model or platform, screen capability and whether you can stock and service campaign products.'),
              ('Review machine and site fit', 'We check site permissions, screen and content control, available slots and refrigeration, connectivity, stocking arrangements and reporting. Review starts with campaign briefs in the Klang Valley.'),
@@ -218,8 +238,8 @@ def make_pages():
     page('/propose-a-site/', 'Propose a Vending Machine Location in Malaysia | Vendvision',
          'Property owners and managers can propose a residential, office, industrial or public site for vending machine placement review by Vendvision.',
          intro('For property owners and managers', 'Host a vending machine at your property',
-               'Have a spot where residents, staff or visitors regularly stop for a drink or snack? Tell us about the property and where a machine could go.',
-               button('Propose my site', '#site-submission')) +
+               'Show us where residents, staff or visitors stop for refreshments. We’ll review the spot for vending placement.',
+               button('Propose my site', '#site-submission'), image='site-survey.webp') +
          enquiry('site-submission', 'Propose your site', 'An estimate is fine. If you have a photo of the proposed spot, you can attach it in your email app.', 'location',
                  field('Property name') + field('Town and postcode') +
                  field('Property type', options=('Residential / condominium', 'Office', 'Factory / warehouse', 'Retail', 'Education', 'Healthcare', 'Sports / leisure', 'Other')) +
@@ -238,7 +258,7 @@ def make_pages():
          'Submit a property for smart vending or request a corporate pantry proposal in the Klang Valley, including stocking, servicing and payment options.',
          intro('For property managers & employers', 'Vending locations and corporate pantry',
                'Request a vending setup for your property or a staffed-office pantry proposal for your team. ' + DATA['coverage']['locations'],
-               button('Propose a site', '/propose-a-site/') + ' ' + button('Request a pantry proposal', '#pantry', True)) +
+               button('Propose a site', '/propose-a-site/') + ' ' + button('Request a pantry proposal', '#pantry', True), image='office-pantry.webp') +
          section('What makes a site suitable?', '<p>We review regular footfall or headcount, opening hours, available space and power, signal or network access, delivery access and site permissions. The proposal identifies who stocks, cleans and services the machine and how access is arranged.</p>') +
          section('Pantry options for employers', '<p>A staff-paid setup lets employees pay at the machine. An employer-subsidised setup can support an agreed allowance or selected items, subject to payment and operating arrangements. Share expected users, shifts, the product mix and subsidy or budget preferences.</p>', 'tint') +
          section('Site and pantry planning guides', insight_links(['vending-machine-site-readiness-checklist',
@@ -250,10 +270,10 @@ def make_pages():
          service='Vending site and corporate pantry proposals')
 
     page('/vendbi/', 'VendBI Vending Management Software | Vendvision',
-         'Learn how VendBI helps vending operators monitor sales, stock and machine status. Visit the VendBI website or open the operator portal.',
+         'Learn how VendBI helps vending operators monitor sales, stock and machine status. Explore the VendBI website for product details.',
          intro('Vending management software', 'Manage your machines with VendBI',
-               'VendBI helps operators monitor sales, stock levels and machine status across connected machines. Ask VendBI about compatibility, reporting and account setup.',
-               button('Visit VendBI', 'https://www.vendbi.com/') + ' ' + button('Portal Login', PORTAL, True)) +
+               'See sales, stock and machine status across your connected fleet.',
+               button('Visit VendBI', 'https://www.vendbi.com/'), image='fleet-review.webp') +
          section('Tools for daily operations', cards([
              ('Sales and stock', 'View transactions and inventory to plan replenishment.', ''),
              ('Multiple locations', 'Review machine activity across your fleet from a single dashboard.', ''),
@@ -263,7 +283,7 @@ def make_pages():
     page('/about.html', 'About Vendvision Resources Sdn Bhd | Malaysia',
          'Meet Vendvision Resources Sdn Bhd, a Malaysian smart vending and retail media company led by founder and managing director Melvin Chan.',
          intro('About Vendvision', 'Smart vending and retail media in Malaysia',
-               'Vendvision Resources Sdn Bhd (1272299-T) supplies vending machines and supports operators. The Vendvision Brand Network connects brands and agencies with vending operators and participating locations.') +
+               'Vendvision Resources Sdn Bhd (1272299-T) supplies vending machines and supports operators. The Vendvision Brand Network connects brands and agencies with vending operators and participating locations.', image='founder.jpg') +
          section('The people behind Vendvision', '''<div class="about-grid">
           <figure><img src="/assets/extracted-p2-0.jpeg" width="380" height="490" loading="lazy" alt="The Vendvision team"><figcaption>The Vendvision team</figcaption></figure>
           <figure><img src="/assets/founder.jpg" width="724" height="1086" loading="lazy" alt="Melvin Chan, founder and managing director of Vendvision"><figcaption>Melvin Chan · Founder &amp; Managing Director</figcaption></figure>
@@ -274,7 +294,7 @@ def make_pages():
          'Contact Vendvision Resources Sdn Bhd for vending machine quotes, campaign planning, operator partnerships, locations and aftersales support.',
          intro('Contact Vendvision', 'Talk to our team',
                f'{DATA["company"]} ({DATA["registration"]}). Message us on WhatsApp or send us an email.',
-               button('WhatsApp ' + DATA['phone_display'], WA) + ' ' + button(DATA['email'], EMAIL, True)) +
+               button('WhatsApp ' + DATA['phone_display'], WA) + ' ' + button(DATA['email'], EMAIL, True), image='extracted-p2-0.jpeg') +
          section('Tell us what you need', cards([
              ('Brand campaigns', 'Share your target audience, areas and campaign dates.', link('Request a campaign plan', ADS + '#campaign-plan')),
              ('Machine buyers', 'Share your preferred model and location status.', link('Request a quote', MACHINES + '#machine-quote')),
@@ -289,7 +309,7 @@ def make_pages():
         categories.setdefault(article['category'], []).append(article)
     category_sections = ''.join(
         section(escape(category), '<div class="cards">' + ''.join(
-            f'<article class="card"><h3>{link(escape(a["title"]), insight_url(a["slug"]))}</h3>'
+            f'<article class="card">{photo(a["image"])}<h3>{link(escape(a["title"]), insight_url(a["slug"]))}</h3>'
             f'<p>{escape(a["excerpt"])}</p></article>' for a in group
         ) + '</div>', 'tint' if index % 2 else '')
         for index, (category, group) in enumerate(categories.items())
@@ -297,7 +317,7 @@ def make_pages():
     page('/blog.html', 'Vending Insights & Practical Guides | Vendvision',
          'Explore ten actionable guides for Malaysian vending machine buyers, operators, advertisers, property managers and employers.',
          intro('Insights', 'Vending guides and checklists',
-               'Plan a location, compare quotes, launch a campaign or set up an office pantry. Each guide includes a checklist for your next decision.') +
+               'Practical checklists for buying, operating and advertising on vending machines.', image='pack-fit.webp') +
          category_sections)
 
     for article in ARTICLES:
@@ -322,11 +342,11 @@ def make_pages():
           <div class="insight-related"><h2>Related guides</h2>{insight_links(related)}
           {link('All insights', '/blog.html')}</div></div></section>'''
         page(insight_url(slug), article['title'] + ' | Vendvision Insights', article['excerpt'],
-             intro(escape(article['category']), escape(article['title']), escape(article['excerpt'])) +
+             intro(escape(article['category']), escape(article['title']), escape(article['excerpt']), image=article['image']) +
              body, article=article)
 
     page('/404.html', 'Page not found | Vendvision', 'Find vending machines, brand campaigns and Vendvision contacts.',
-         intro('404', 'Page not found', 'Return to the homepage to explore Vendvision’s services.', button('Back to homepage', '/')), index=False)
+         intro('404', 'Page not found', 'Return to the homepage to explore Vendvision’s services.', button('Back to homepage', '/'), image='v22-lobby-560.webp'), index=False)
 
 
 NAV = [
@@ -387,18 +407,17 @@ def render(path, record, mode):
 <link rel="preload" href="/assets/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css">
 <script type="application/ld+json">{schema_json}</script><script src="/assets/site.js" defer></script></head>
-<body><a class="skip" href="#main">Skip to content</a>
+<body data-view="{'guide' if article else path.strip('/').replace('.html', '') or 'home'}"><a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap header-row">{brand()}
 <nav class="desktop-nav" aria-label="Main navigation">{nav_links(NAV, current)}</nav>
-<a class="portal desktop-portal" href="{PORTAL}">Portal Login <span aria-hidden="true">↗</span></a>
 <details class="mobile-nav"><summary>Menu</summary>
-<nav aria-label="Mobile navigation">{nav_links(NAV + EXTRAS + [('Portal Login', PORTAL)], current)}</nav></details>
+<nav aria-label="Mobile navigation">{nav_links(NAV + EXTRAS, current)}</nav></details>
 </div></header>
 <main id="main" tabindex="-1">{body}</main>
 <footer><div class="wrap footer-grid">
 <div>{brand(stacked=True)}<p>{DATA['company']}<br>{DATA['registration']}</p></div>
 <nav aria-label="Explore Vendvision">{nav_links(NAV, current)}</nav>
-<nav aria-label="Company">{nav_links(EXTRAS + [('Portal Login', PORTAL)], current)}</nav>
+<nav aria-label="Company">{nav_links(EXTRAS, current)}</nav>
 <div><p><strong>Talk to Vendvision</strong></p><a href="{EMAIL}">{DATA['email']}</a><br>
 <a href="{WA}">{DATA['phone_display']} · WhatsApp only</a></div>
 </div></footer></body></html>'''

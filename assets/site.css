@@ -158,3 +158,128 @@ footer .brand img { width: 70px; height: auto; }
 .insight-related { border-top: 1px solid var(--line); padding-top: 1.5rem; margin-top: 2rem; }
 .insight-links { padding-left: 1.2rem; }
 .insight-links li + li { margin-top: .45rem; }
+
+/* The exhibition palette carries the campaign photography into the rest of the site. */
+:root {
+  --ink: #201c20;
+  --muted: #56504f;
+  --paper: #f6f3ed;
+  --deep: #221b20;
+  --line: #d8d2cb;
+  --tint: #eeeae3;
+  background: var(--paper);
+}
+.wrap { width: min(1320px, calc(100% - clamp(36px, 8vw, 128px))); }
+.site-header { border-top: 4px solid var(--brand); }
+.header-row { min-height: 78px; }
+.desktop-nav { gap: clamp(.75rem, 1.3vw, 1.55rem); }
+.desktop-nav a { font-size: .88rem; }
+.portal, .mobile-nav summary, .button { border-radius: 30px; }
+.portal { color: var(--ink); border-color: var(--ink); }
+.button { padding: .78rem 1.35rem; background: var(--pink); border-color: var(--pink); }
+.button:hover { background: #800546; }
+.home-hero { color: white; background: #211a20; }
+.hero-grid { width: 100%; max-width: 1720px; padding: 0; gap: 0; grid-template-columns: 53% 47%; align-items: stretch; }
+.hero-copy { align-self: center; padding: clamp(2rem,5vw,6rem) clamp(1.25rem,2.5vw,3rem) clamp(2rem,5vw,6rem) max(4vw,calc((100vw - 1320px) / 2)); }
+.home-hero h1 { font-size: clamp(3.7rem,6.8vw,7.3rem); line-height: .97; letter-spacing: -.07em; }
+.home-hero h1 em { color: #ff66b5; }
+.eyebrow { display: flex; align-items: center; gap: .65rem; }
+.eyebrow::before { content: ''; width: 1.65rem; height: 3px; background: currentColor; }
+.hero-copy .eyebrow { color: #ffb4dc; margin-bottom: clamp(1.75rem,3vw,3rem); }
+.hero-copy .lead { color: #e1d5dd; max-width: 36ch; }
+.hero-copy .button:not(.secondary) { background: #f558aa; border-color: #f558aa; color: #23151e; }
+.hero-copy .button.secondary { background: transparent; border-color: #8d7785; color: white; }
+.hero-copy .text-link { color: #e4d6df; font-size: .88rem; font-weight: 500; }
+.hero-grid .campaign-figure { overflow: hidden; min-height: min(44vw,675px); background: #30282b; }
+.hero-grid .campaign-figure img { position: absolute; inset: 0; height: 100%; border-radius: 0; object-position: center 50%; }
+.hero-grid .campaign-figure figcaption { position: absolute; bottom: 1rem; left: 1rem; background: #211a20ed; color: white; padding: .45rem .8rem; font-size: .72rem; letter-spacing: .045em; }
+.section { border-bottom: 1px solid var(--line); }
+.section > .wrap > h2 { margin-bottom: clamp(1.4rem,3vw,3rem); }
+.cards { gap: 0; border-top: 1px solid var(--ink); }
+.card { border: 0; padding: clamp(1.2rem,2.7vw,2.5rem); border-bottom: 1px solid var(--line); }
+.card + .card { border-left: 1px solid var(--line); }
+.card h3 { font-size: clamp(1.4rem,2.4vw,2.35rem); }
+.card h3 a { color: var(--ink); text-decoration: none; }
+.card h3 a:hover { color: var(--pink); }
+.card .text-link { text-underline-offset: .35em; }
+.brand-band { position: relative; overflow: hidden; background: #a70056; }
+.brand-band .wrap { position: relative; min-height: 260px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.brand-band .wrap > h2 { max-width: 11ch; font-size: clamp(3rem,5.5vw,6rem); margin: 0; }
+.brand-band .wrap > p { max-width: min(44ch,51%); }
+.catalogue-shot { position: absolute; right: 4%; top: -15%; bottom: -15%; width: 32%; background: #fcfaf8; border-radius: 50% 50% 3px 3px; overflow: hidden; }
+.catalogue-shot img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.intro { position: relative; isolation: isolate; overflow: hidden; background: var(--deep); color: white; }
+.intro::after { content: ''; position: absolute; z-index: -1; width: 50vw; height: 65vw; right: -13vw; top: 25%; border: clamp(2rem,6vw,8rem) solid #472236; border-radius: 40%; transform: rotate(-35deg); }
+.intro h1 { max-width: 19ch; }
+.intro .eyebrow { color: #ffafd5; }
+.intro .lead { color: #e4d7df; max-width: 49ch; }
+.intro .button:not(.secondary) { background: #f558aa; color: #21151c; border-color: #f558aa; }
+[data-view="guide"] .intro, [data-view="blog"] .intro { background: #e8e2d9; color: var(--ink); }
+[data-view="guide"] .intro::after, [data-view="blog"] .intro::after { border-color: #ddd4c8; }
+[data-view="guide"] .intro .lead, [data-view="blog"] .intro .lead { color: var(--muted); }
+[data-view="guide"] .intro .eyebrow, [data-view="blog"] .intro .eyebrow { color: var(--pink); }
+[data-view="guide"] .prose { font-size: 1.13rem; line-height: 1.75; }
+.insight-checklist { background: #fffaf4; }
+.form-section { background: #eee8e2; }
+form { box-shadow: 0 16px 50px #3429350b; border-radius: 12px; padding: clamp(1.25rem,3vw,3.1rem); }
+.form-note { border-bottom: 1px solid var(--line); padding-bottom: 1rem; }
+input,select,textarea { border-color: #b5aaa9; background: #fffefc; }
+label:has(textarea) { grid-column: 1/-1; }
+.model-photo { background: #fff; }
+.model-photo img { background: #fff; }
+.model-photo figcaption { border-top: 1px solid var(--line); }
+.steps li { border-color: var(--ink); }
+footer { border-top: 5px solid var(--brand); }
+.footer-grid { padding-block: clamp(3rem,6vw,6rem); }
+@media (min-width: 1011px) and (max-width: 1190px) {
+  .site-header .brand img { width: 115px; }
+  .desktop-nav { gap: .65rem; }
+  .header-row { gap: .6rem; }
+}
+@media (max-width: 760px) {
+  .hero-grid { width: 100%; grid-template-columns: 1fr; }
+  .hero-copy { padding: 2.1rem 5vw; }
+  .home-hero h1 { font-size: clamp(3.35rem,11vw,5rem); }
+  .hero-copy .lead { margin-block: 1.15rem; }
+  .hero-partners { margin-top: 1.15rem; }
+  .hero-grid .campaign-figure { height: clamp(300px,95vw,480px); }
+  .hero-grid .campaign-figure img { object-position: center 48%; }
+  .card { padding: 1.25rem 0; }
+  .card + .card { border-left: 0; }
+  .catalogue-shot { position: relative; inset: auto; width: 100%; height: 220px; margin-top: 1.4rem; border-radius: 8px; }
+  .brand-band .wrap > p { max-width: 40ch; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .button, .portal { transition: transform .18s ease, background-color .18s ease; }
+  .button:hover, .portal:hover { transform: translateY(-2px); }
+}
+@media (min-width: 900px) {
+  [data-view="services"] .intro .wrap, [data-view="propose-a-site"] .intro .wrap,
+  [data-view="vending-machine-advertising-malaysia"] .intro .wrap { padding-right: min(40vw,560px); }
+  [data-view="services"] .intro::after, [data-view="propose-a-site"] .intro::after,
+  [data-view="vending-machine-advertising-malaysia"] .intro::after {
+    inset: 0 0 0 auto; width: 37%; height: auto; border: 0; border-radius: 0; transform: none;
+    background: #eae5de url('/assets/v22-lobby-560.webp') center 48% / cover no-repeat;
+  }
+  [data-view="services"] .intro::after { background: #fff url('/assets/full-touchscreen.webp') center / 90% auto no-repeat; }
+}
+
+/* Editorial photographs sit beside the decision they illustrate. */
+.intro:has(.intro-photo) { padding: 0; }
+.intro:has(.intro-photo)::after { display: none; }
+.intro:has(.intro-photo) .wrap { display: grid; grid-template-columns: 1.1fr 1fr; width: 100%; max-width: 1600px; padding: 0; align-items: stretch; }
+.intro-copy { align-self: center; min-width: 0; }
+.intro-photo { min-height: 19rem; position: relative; background: #d8d0c8; overflow: hidden; }
+.intro-photo img { width: 100%; height: 100%; position: absolute; object-fit: cover; }
+.intro:has(.intro-photo) .intro-copy { padding: clamp(2rem,5vw,5.5rem) clamp(1.4rem,3.5vw,4rem) clamp(2rem,5vw,5.5rem) max(4vw,calc((100vw - 1320px)/2)); }
+[data-view="services"] .intro-photo img { object-fit: contain; background: white; }
+[data-view="about"] .intro-photo img,[data-view="contact"] .intro-photo img { object-position: 50% 23%; }
+.card:has(>img) { padding: 1rem; }
+.card > img { width: 100%; aspect-ratio: 3/2; object-fit: cover; margin-bottom: 1.1rem; }
+@media(max-width:760px) {
+ .intro:has(.intro-photo) .wrap { grid-template-columns: 1fr; }
+ .intro-photo { height: clamp(11rem,53vw,20rem); min-height: 0; }
+ .intro:has(.intro-photo) .intro-copy { padding: 2.25rem 5vw 1.5rem; }
+ .intro-photo img { object-position: 50% 45%; }
+ .card:has(>img) { padding: 1.2rem 0; }
+}
