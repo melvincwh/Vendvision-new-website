@@ -1,0 +1,27 @@
+{
+  "slug": "vending-retail-media-measurement",
+  "order": 8,
+  "category": "Brands & agencies",
+  "title": "How to measure a vending retail media campaign",
+  "excerpt": "Build a vending campaign report that distinguishes playback, customer response and product sales, with practical measurement checks.",
+  "opening": "Plan three lines of evidence. Playback logs describe the creative that ran. Tagged landing-page visits can show trackable responses. Stock and sales records can describe what happened at the machine. Each measure answers a different question, so agree on definitions before the first campaign day.",
+  "checklist_title": "Measurement checklist",
+  "checklist": [
+    "Build a sheet with machine ID, site, dates, campaign format, SKU and a reporting owner. Use consistent IDs across media and stock records.",
+    "Confirm what a playback log records and how downtime is flagged. Keep play counts separate from estimated audience reach.",
+    "If the creative uses a QR code, assign campaign or location tags to the destination URL. Test that the landing page opens and the visit records in analytics.",
+    "Capture units sold and in-stock machine-days. Also show total sales across the scheduled period so stockouts remain visible.",
+    "If you want to assess incremental sales, plan a comparable baseline or comparison site. Account for changes in price, hours, stock and other promotions.",
+    "Give the final report a short limitations section. Separate observed results, plausible explanations and the decision for the next campaign."
+  ],
+  "close": "As an illustrative comparison, 120 sales over 10 in-stock machine-days is 12 per in-stock day. Report that alongside the full campaign dates and any gaps. A playback log alone cannot establish who saw the creative or what caused a sale.",
+  "action": {
+    "label": "Discuss campaign reporting",
+    "url": "/vending-machine-advertising-malaysia/#campaign-plan"
+  },
+  "created_at": "2026-11-19",
+  "source": {
+    "label": "Google Analytics guide to campaign URLs",
+    "url": "https://support.google.com/analytics/answer/10917952?hl=en"
+  }
+}

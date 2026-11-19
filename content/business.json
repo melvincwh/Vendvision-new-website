@@ -1,0 +1,46 @@
+{
+  "company": "Vendvision Resources Sdn Bhd",
+  "registration": "1272299-T",
+  "email": "sales@vendvision.co",
+  "whatsapp": "60392124224",
+  "phone_display": "+603 9212 4224",
+  "canonical": "https://www.vendvision.co",
+  "production_ga4": "G-7Z47X153CT",
+  "coverage": {
+    "campaigns": "Planning starts in the Klang Valley. We confirm participating sites and machine availability against your brief.",
+    "locations": "Initial site and pantry enquiries focus on the Klang Valley. Coverage and servicing are confirmed by postcode."
+  },
+  "models": [
+    {
+      "code": "VV-CSC-10C",
+      "name": "V22",
+      "display": "Visible products, side touchscreen",
+      "application": "Chilled drinks and packaged snacks where shoppers can browse the physical assortment",
+      "dimensions": "1940 × 1269 × 795 mm",
+      "choices": 70,
+      "capacity": 300,
+      "temperature": "4–25°C adjustable",
+      "payment": "Cashless; bill and coin support",
+      "offer": null
+    },
+    {
+      "code": "VV-D720-8C",
+      "name": "50SP",
+      "display": "Compact unit, full touchscreen",
+      "application": "Chilled drinks and packaged snacks where a narrower machine is preferred",
+      "dimensions": "1933 × 771 × 892 mm",
+      "choices": 48,
+      "capacity": 240,
+      "temperature": "4–25°C adjustable",
+      "payment": "Cashless; bill and coin support",
+      "offer": null
+    }
+  ],
+  "campaign_example": {
+    "title": "A chilled beverage launch across Klang Valley workplaces",
+    "brief": "A beverage brand wants office workers to discover a new drink during the workday. The campaign would shortlist workplace vending machines with chilled slots.",
+    "execution": "Check pack fit, screen access and availability with each operator. Agree artwork, campaign dates, starting stock and the restocking plan before booking.",
+    "measurement": "Review available playback records, units sold and stockouts by participating machine for the agreed period."
+  },
+  "production_delivery_path": null
+}

@@ -1,0 +1,23 @@
+{
+  "slug": "vending-machine-site-readiness-checklist",
+  "order": 9,
+  "category": "Property managers & employers",
+  "title": "Vending site readiness checklist for property managers",
+  "excerpt": "Use a joint site walk to verify placement, access, utilities and responsibilities before a vending machine arrives.",
+  "opening": "Do the site walk with the people who manage the building and the operator who will refill the machine. A position that looks right on a floor plan may be difficult to reach with a trolley after hours. Put the agreed position and route in your site notes so the installation team can verify both.",
+  "checklist_title": "Bring this list to the site walk",
+  "checklist": [
+    "Mark the proposed position on a photo or floor plan. Review sales visibility, queue space, accessibility and adjacent doors.",
+    "Walk the route from unloading point to final position. Record door, lift and corridor dimensions, turns and lift booking requirements.",
+    "Ask facilities to review the required electrical supply, connectivity, ventilation and equipment clearances against the chosen model.",
+    "Confirm operating hours, service access, security contacts and the escalation route for refunds, faults or spills.",
+    "Agree who pays for electricity, who cleans around the machine, who handles repairs and who is responsible for moving it at the end of the agreement.",
+    "Set a review date and decide what to review. Include complaints, reliability, refill visits and whether the service meets occupant needs."
+  ],
+  "close": "Share photos, measurements, opening hours and the facilities contact with the operator. Record outstanding approvals before confirming installation.",
+  "action": {
+    "label": "Submit a vending site",
+    "url": "/locations/#site-submission"
+  },
+  "created_at": "2026-11-19"
+}

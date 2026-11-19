@@ -1,0 +1,23 @@
+{
+  "slug": "vending-machine-quote-checklist-malaysia",
+  "order": 2,
+  "category": "Buyers & operators",
+  "title": "Vending machine quote checklist for Malaysian buyers",
+  "excerpt": "Prepare one brief for suppliers and compare machine fit, payment fees, installation, software and warranty on the same basis.",
+  "opening": "Two machines can hold similar products and still cost different amounts to install and run. Ask each supplier to quote the same products and site, then put one-off charges and ongoing charges in separate columns. Request a demonstration with your actual packaging if you sell unusually tall bottles, light packs or fragile items.",
+  "checklist_title": "What to send and what to ask",
+  "checklist": [
+    "Send your postcode, location status, floor photos and the measured delivery route. State whether you need help finding a site.",
+    "List your likely products, pack measurements and required storage conditions. Ask for the layout and usable capacity with that mix.",
+    "List the payment methods you need. Separate hardware cost, transaction fees and settlement timing. Ask who handles failed payments and refunds.",
+    "Request an itemised quote for the machine, installation, delivery, training, connectivity, software and any upgrades. Ask whether prices include applicable taxes.",
+    "Get the warranty in writing. Distinguish parts, labour, travel and exclusions. Ask how service requests are handled at your postcode.",
+    "Agree what acceptance looks like. At handover, verify the selected products vend, a payment completes, the sale appears in reporting and your team can refill the machine."
+  ],
+  "close": "Send the same brief to each supplier. Compare the cash due before opening and the estimated cost over the same operating period, using the same sales assumptions.",
+  "action": {
+    "label": "Compare vending machines and request a quote",
+    "url": "/services.html#machine-quote"
+  },
+  "created_at": "2026-11-19"
+}

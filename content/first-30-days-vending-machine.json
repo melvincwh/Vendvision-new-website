@@ -1,0 +1,23 @@
+{
+  "slug": "first-30-days-vending-machine",
+  "order": 4,
+  "category": "Buyers & operators",
+  "title": "Your first 30 days operating a vending machine",
+  "excerpt": "Use an opening-month plan to test payments, refine your first stock mix and set a restocking rhythm.",
+  "opening": "The first month is a test of demand and of the work needed to serve the site. A sold-out row can make a weak-looking sales report difficult to interpret. Track availability alongside sales and keep the first changes small enough to understand.",
+  "checklist_title": "Opening-month checklist",
+  "checklist": [
+    "Before opening, test a purchase and refund path, confirm product prices, and save the machine ID and service contacts. Check dispensing with each initial pack type.",
+    "In week one, start with a small range. Record the units loaded by slot, date and expiry. Rotate stock so the shortest valid dates are used first.",
+    "At each visit, log units left, stockouts, near-expiry items, time on site and any faults. Reconcile the machine count and payment records.",
+    "In week two, set refill quantities using sales between visits, a small buffer for faster items and the shelf life of each product. Review the buffer if waste grows.",
+    "In week three, change one clear variable at a time, such as one slow product or one price. Note the change date, site events and any interruptions.",
+    "In week four, compare units per trading day, refill travel, waste and faults. Choose one product change and one operational improvement for the next month."
+  ],
+  "close": "Preserve the opening records as your comparison point. Track recurring failures by time, product and slot so the service team can investigate with specific examples.",
+  "action": {
+    "label": "Explore VendBI for operating visibility",
+    "url": "/vendbi/"
+  },
+  "created_at": "2026-11-19"
+}

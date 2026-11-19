@@ -1,0 +1,25 @@
+{
+  "slug": "the-green-future-of-vending",
+  "order": 5,
+  "category": "Buyers & operators",
+  "title": "How to compare vending machine energy use and stock waste",
+  "excerpt": "Ask for comparable energy data and measure stock losses before choosing a machine or changing how you restock it.",
+  "opening": "Running costs depend on your machine, products and site. A quoted energy figure is easier to interpret if you know the temperature, configuration and operating conditions behind it. Treat energy and waste as separate items in your operating budget so an improvement in one does not hide a cost in the other.",
+  "checklist_title": "Audit energy and waste",
+  "checklist": [
+    "Ask each supplier for model-specific daily energy use in kWh and the conditions behind the figure. Compare machines at similar temperatures, stocking levels and ambient conditions.",
+    "Use your own electricity rate to estimate cost. For example, multiply measured kWh per day by operating days and the applicable rate per kWh.",
+    "Confirm ventilation and clearance with the supplier. Note heat sources and direct sun during the site survey.",
+    "Ask the supplier or site facilities team how to meter the machine safely over a representative week. Log closures or hot days so you can interpret outliers.",
+    "Track expired, damaged and slow-moving stock separately. Record how many units you discard and the stock cost behind those losses.",
+    "Test smaller fills for slow products and review after two refill cycles. Ask about supported energy settings before changing them, and keep products within their required storage conditions."
+  ],
+  "close": "Use the same weekly sheet to record energy, stock losses and sales. Review estimated energy cost and waste cost per operating day before committing to a change.",
+  "action": {
+    "label": "Ask for configuration details",
+    "url": "/services.html#machine-quote"
+  },
+  "created_at": "2024-12-16",
+  "updated_at": "2026-11-19",
+  "legacy": true
+}

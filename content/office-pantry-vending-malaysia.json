@@ -1,0 +1,23 @@
+{
+  "slug": "office-pantry-vending-malaysia",
+  "order": 10,
+  "category": "Property managers & employers",
+  "title": "How to plan an office pantry vending service",
+  "excerpt": "Compare staff-paid and employer-subsidised pantry options, agree a service plan and set measures for an office pilot.",
+  "opening": "Start with the employees the pantry needs to serve. Staff on a late shift may have different needs from a team that works near a canteen at lunchtime. Ask for the products, price points and service windows that solve the biggest gap, then choose a payment arrangement your team can administer.",
+  "checklist_title": "Office pantry planning checklist",
+  "checklist": [
+    "Record headcount by shift and typical on-site days. Note which groups have limited access to other food and drinks.",
+    "Collect preferences for snacks, beverages, dietary needs and pricing. Agree what information should appear on product labels or selections.",
+    "Compare staff-paid, partial subsidy and employer-funded options. Ask what the machine can support, what reporting is available and how reconciliation works.",
+    "If subsidising, agree which products qualify, who can use the subsidy, how limits work and who reviews spending. Test the payment flow before launch.",
+    "Assign responsibilities for refills, cleaning, faults, refunds and stock changes. Give employees a clear contact for issues.",
+    "Review availability during each shift, complaints, use and budget after the pilot. Decide whether to adjust the assortment, subsidy or refill schedule."
+  ],
+  "close": "Send the operator your headcount, work pattern, location photos and preferred funding model. A single page is enough for a first proposal.",
+  "action": {
+    "label": "Request an office pantry proposal",
+    "url": "/locations/#pantry"
+  },
+  "created_at": "2026-11-19"
+}

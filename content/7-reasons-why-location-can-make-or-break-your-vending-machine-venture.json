@@ -1,0 +1,26 @@
+{
+  "slug": "7-reasons-why-location-can-make-or-break-your-vending-machine-venture",
+  "order": 1,
+  "category": "Buyers & operators",
+  "title": "How to choose a vending machine location in Malaysia",
+  "excerpt": "Use a seven-point site survey to compare footfall, product demand, access, utilities and placement terms before committing to a vending site.",
+  "opening": "A busy lobby and a good vending site are two different things. A corridor where people hurry to the car park may see more traffic than a break room, while the break room gives staff time to browse and a reason to return. Compare where people stop, what they already buy and when they have few alternatives.",
+  "checklist_title": "Score the location before signing",
+  "checklist": [
+    "Count relevant footfall. Use the same observation window at each candidate site. Record arrivals, lunch breaks and shift changes separately.",
+    "Test the product fit. Ask regular users what they would buy, when and at what price. Bring photos of three possible products to make the questions concrete.",
+    "Map alternatives. Record the opening hours, prices and walking distance of the closest canteen or shop.",
+    "Walk the purchase journey. Check visibility from the main route, room to queue and whether customers can use the touchscreen and collect items comfortably.",
+    "Walk the delivery route. Measure doorways, turns and lifts. Confirm power, connectivity, ventilation and the supplier’s required clearances.",
+    "Check access and security. Identify who can enter, who opens the site for service and how incidents are reported.",
+    "Write down the economics. Record rent or commission, utilities, the trial term, notice period and who pays to move the machine."
+  ],
+  "close": "Bring a floor photo, observations by time slot and draft terms to the site review. Treat unknowns such as lift fit or power access as open items before committing.",
+  "action": {
+    "label": "Submit a site",
+    "url": "/locations/#site-submission"
+  },
+  "created_at": "2024-11-30",
+  "updated_at": "2026-11-19",
+  "legacy": true
+}

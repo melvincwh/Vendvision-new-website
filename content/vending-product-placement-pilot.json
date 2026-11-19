@@ -1,0 +1,23 @@
+{
+  "slug": "vending-product-placement-pilot",
+  "order": 7,
+  "category": "Brands & agencies",
+  "title": "How to pilot a product in vending machines",
+  "excerpt": "Plan a vending product pilot with a pack-fit test, a refill owner, a stockout plan and a clear review decision.",
+  "opening": "A product that sells well in a shop may present practical problems in a vending tray. A soft pack can catch, a bottle can tip and a label may be hard to read through glass. Run the pilot where you can check the pack, keep it stocked and learn what to change before adding sites.",
+  "checklist_title": "Product pilot checklist",
+  "checklist": [
+    "Deliver actual retail packs for testing. Share dimensions, filled weight, storage conditions, shelf life and case quantity.",
+    "Agree on the slot type and verify repeated vends at different fill levels. Inspect the packs after each drop for damage.",
+    "Pick a small group of sites for a clear audience and buying occasion. Write down why each site was chosen.",
+    "Decide who owns stock, who refills it and who pays for waste, returns or unsold inventory. Agree on a minimum stock level and response time.",
+    "Check how the product appears in the machine and on the screen. Align its name, price and selection number so customers can find it.",
+    "Review units per in-stock machine-day, failed vends, stockouts, remaining shelf life and feedback. Agree what results justify expanding, adjusting the pack or stopping."
+  ],
+  "close": "For example, a chilled tea pilot could use two workplaces and count how many days each machine actually had stock. Use that denominator when comparing the sites.",
+  "action": {
+    "label": "Discuss a product placement pilot",
+    "url": "/vending-machine-advertising-malaysia/#campaign-plan"
+  },
+  "created_at": "2026-11-19"
+}

@@ -1,0 +1,23 @@
+{
+  "slug": "vending-screen-campaign-brief",
+  "order": 6,
+  "category": "Brands & agencies",
+  "title": "How to brief a vending screen campaign",
+  "excerpt": "Prepare a retail media brief covering audience, locations, screen creative, playback checks and reporting before booking.",
+  "opening": "A good brief helps the media team choose machines and gives the creative team a clear job. Start with the moment you want to influence, such as an afternoon drinks purchase at an office site. Use that moment to decide whether the screen should prompt a purchase, start a trial or invite a follow-up action.",
+  "checklist_title": "Send this before you book",
+  "checklist": [
+    "State one objective and one primary measure. Pick a metric you can collect, such as playback records, tracked page visits or units sold.",
+    "Describe the audience, areas, venue types, dates and budget. Explain which requirements are fixed and where substitutions are acceptable.",
+    "Ask whether the machine can carry the product shown. For a combined campaign, agree who stocks it, the refill plan and what to do when the row sells out.",
+    "Request screen dimensions, orientation, accepted files and duration. Design for a short glance, with one legible message and a single action.",
+    "Test the actual asset on a machine or accurate screen preview. If using a QR code, scan it from realistic distances and test the landing page on a phone.",
+    "Agree on evidence before launch. Ask what playback records, stock data and sales data can be supplied, by which dates and with which gaps disclosed."
+  ],
+  "close": "Send a one-page brief, the draft asset and the desired reporting measures together. Request a shortlist with site availability and reporting confirmed per location.",
+  "action": {
+    "label": "Request a campaign plan",
+    "url": "/vending-machine-advertising-malaysia/#campaign-plan"
+  },
+  "created_at": "2026-11-19"
+}

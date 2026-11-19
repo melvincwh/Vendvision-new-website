@@ -1,0 +1,23 @@
+{
+  "slug": "vending-machine-break-even-malaysia",
+  "order": 3,
+  "category": "Buyers & operators",
+  "title": "How to estimate vending machine break-even in RM",
+  "excerpt": "Build a simple vending break-even model with contribution per sale, monthly site costs and low, base and high sales scenarios.",
+  "opening": "Start with the money a sale leaves after its direct costs. A product sold for RM4.00 with RM2.20 stock cost and RM0.20 in variable fees contributes RM1.60 towards fixed costs. With RM400 in recurring fixed costs, that illustrative setup needs 250 sales a month to cover those costs. The example uses assumed figures, not a Vendvision price or earnings forecast.",
+  "checklist_title": "Build a model you can update",
+  "checklist": [
+    "Separate setup costs from monthly costs. Include delivery, installation and initial stock in your cash plan. Treat refundable deposits as cash tied up.",
+    "Estimate contribution by product. Deduct stock cost, payment fees and commission charged per sale. Use a mix-weighted estimate if sales vary by item.",
+    "List monthly costs. Allow for rent, connectivity, software, regular servicing and restocking travel. Include a budget for waste where relevant, without counting it twice.",
+    "Divide fixed costs by contribution per sale. Round up. Use the number of actual trading days to convert the monthly result into a daily target.",
+    "Test three demand scenarios. Model a quiet month, a typical month and a busy month. Include holidays or closures where they matter.",
+    "Separate operating break-even from payback. To estimate payback, divide upfront investment by recurring monthly cash surplus only when the surplus is positive."
+  ],
+  "close": "After installation, replace assumptions with actual sales, costs and stockouts. A weak result may call for a change in the product mix, servicing route or site terms.",
+  "action": {
+    "label": "Prepare a machine quote brief",
+    "url": "/services.html#machine-quote"
+  },
+  "created_at": "2026-11-19"
+}
