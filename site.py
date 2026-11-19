@@ -76,10 +76,13 @@ def field(label, kind='text', optional=False, options=()):
     return f'<label><span>{escape(caption)}</span>{control}</label>'
 
 
+ENQUIRY_EMAIL = 'hello@vendvision.co'
+
+
 def enquiry(anchor, title, description, journey, fields):
     return f'''<section class="section form-section" id="{anchor}"><div class="wrap form-layout">
       <div><p class="eyebrow">Talk to Vendvision</p><h2>{title}</h2><p>{description}</p>
-      <p><a href="{EMAIL}">{DATA['email']}</a><br><a href="{WA}">WhatsApp {DATA['phone_display']}</a></p></div>
+      <p><a href="mailto:{ENQUIRY_EMAIL}">{ENQUIRY_EMAIL}</a><br><a href="{WA}">WhatsApp {DATA['phone_display']}</a></p></div>
       <div><form data-enquiry="{journey}" data-subject="{escape(title)}" hidden>
         <p class="form-note">Compose your enquiry here, then send it from WhatsApp or your email app.</p>
         <div class="fields">{field('Your name')}{field('Work email', 'email')}{fields}</div>
