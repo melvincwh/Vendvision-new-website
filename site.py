@@ -121,7 +121,7 @@ def make_pages():
          <h1>Seen on screen.<br><em>Bought on site.</em></h1>
          <p class="lead">Reach shoppers at vending machines in Malaysia. Run a screen ad, put your product on sale, or do both at the same location.</p>
          <div class="actions">{button('Plan a campaign', ADS)}{button('Explore vending machines', MACHINES, True)}</div>
-         <div class="hero-partners">{link('For vending operators', '/operators/')}{link('For location owners', '/locations/')}</div>
+         <div class="hero-partners">{link('For vending operators', '/operators/')}{link('Propose a vending location', '/propose-a-site/')}</div>
          </div>{campaign_image(hero=True)}</div></section>''' +
          section('Three ways to reach shoppers', cards([
              ('Screen advertising', 'Run creative on screens at participating machines. Choose target areas, venue types and campaign dates.', link('Explore screen advertising', ADS + '#formats')),
@@ -215,17 +215,35 @@ def make_pages():
                  field('Model, platform or stocking details', 'textarea', True)),
          service='Vending operator partnerships')
 
+    page('/propose-a-site/', 'Propose a Vending Machine Location in Malaysia | Vendvision',
+         'Property owners and managers can propose a residential, office, industrial or public site for vending machine placement review by Vendvision.',
+         intro('For property owners and managers', 'Host a vending machine at your property',
+               'Have a spot where residents, staff or visitors regularly stop for a drink or snack? Tell us about the property and where a machine could go.',
+               button('Propose my site', '#site-submission')) +
+         enquiry('site-submission', 'Propose your site', 'An estimate is fine. If you have a photo of the proposed spot, you can attach it in your email app.', 'location',
+                 field('Property name') + field('Town and postcode') +
+                 field('Property type', options=('Residential / condominium', 'Office', 'Factory / warehouse', 'Retail', 'Education', 'Healthcare', 'Sports / leisure', 'Other')) +
+                 field('Your role or management company') + field('Contact number', 'tel', True) +
+                 field('Estimated daily users or footfall', optional=True) +
+                 field('Proposed spot, opening hours and power access', 'textarea', True)) +
+         section('How we review your site', steps([
+             ('Understand demand', 'We look at who uses the property, when it gets busy and where people already buy refreshments.'),
+             ('Check the proposed spot', 'If the site looks suitable, we can review photos or arrange a visit to check space, power and access for refilling.'),
+             ('Discuss placement terms', 'Before installation, both parties agree on the machine, servicing responsibilities and commercial terms.'),
+         ])) +
+         section('Planning a staff pantry?', link('Explore corporate pantry options', '/locations/#pantry')),
+         service='Vending machine site placement enquiries')
+
     page('/locations/', 'Vending Locations & Corporate Pantry Klang Valley | Vendvision',
          'Submit a property for smart vending or request a corporate pantry proposal in the Klang Valley, including stocking, servicing and payment options.',
          intro('For property managers & employers', 'Vending locations and corporate pantry',
                'Request a vending setup for your property or a staffed-office pantry proposal for your team. ' + DATA['coverage']['locations'],
-               button('Submit a site', '#site-submission') + ' ' + button('Request a pantry proposal', '#pantry', True)) +
+               button('Propose a site', '/propose-a-site/') + ' ' + button('Request a pantry proposal', '#pantry', True)) +
          section('What makes a site suitable?', '<p>We review regular footfall or headcount, opening hours, available space and power, signal or network access, delivery access and site permissions. The proposal identifies who stocks, cleans and services the machine and how access is arranged.</p>') +
          section('Pantry options for employers', '<p>A staff-paid setup lets employees pay at the machine. An employer-subsidised setup can support an agreed allowance or selected items, subject to payment and operating arrangements. Share expected users, shifts, the product mix and subsidy or budget preferences.</p>', 'tint') +
          section('Site and pantry planning guides', insight_links(['vending-machine-site-readiness-checklist',
                  'office-pantry-vending-malaysia'])) +
-         enquiry('site-submission', 'Submit a site', 'Share the property and expected usage so we can assess suitability.', 'location',
-                 field('Property and postcode') + field('Venue type') + field('Daily footfall or regular users', optional=True) + field('Access, space or power details', 'textarea', True)) +
+         section('Have a property in mind?', button('Propose a site', '/propose-a-site/'), anchor='site-submission') +
          enquiry('pantry', 'Request a pantry proposal', 'Tell us your office location, headcount and preferred payment arrangement.', 'pantry',
                  field('Company and postcode') + field('Headcount and working hours') +
                  field('Payment preference', options=('Staff-paid', 'Employer-subsidised', 'Discuss both')) + field('Product or budget preferences', 'textarea', True)),
@@ -261,7 +279,8 @@ def make_pages():
              ('Brand campaigns', 'Share your target audience, areas and campaign dates.', link('Request a campaign plan', ADS + '#campaign-plan')),
              ('Machine buyers', 'Share your preferred model and location status.', link('Request a quote', MACHINES + '#machine-quote')),
              ('Operators', 'Share your fleet size and screen capability.', link('Check eligibility', '/operators/#operator-form')),
-             ('Properties and employers', 'Share the postcode, site type and expected usage.', link('Submit a location or pantry brief', '/locations/')),
+             ('Property owners and managers', 'Share a property for vending placement review.', link('Propose a site', '/propose-a-site/')),
+             ('Employers', 'Tell us about your team and preferred payment arrangement.', link('Request a pantry proposal', '/locations/#pantry')),
              ('Aftersales', 'Share your model, postcode and support question. The WhatsApp number accepts messages only.', link('Message support on WhatsApp', WA))
          ])))
 
@@ -312,7 +331,7 @@ def make_pages():
 
 NAV = [
     ('Brands & Agencies', ADS), ('Vending Machines', MACHINES), ('Operators', '/operators/'),
-    ('Locations & Pantry', '/locations/'), ('VendBI', '/vendbi/')
+    ('Propose a Site', '/propose-a-site/'), ('Corporate Pantry', '/locations/#pantry'), ('VendBI', '/vendbi/')
 ]
 EXTRAS = [('About', '/about.html'), ('Insights', '/blog.html'), ('Contact', '/contact.html')]
 ORG = {
