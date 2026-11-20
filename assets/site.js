@@ -92,7 +92,7 @@ function track(name, parameters) {
   }
   // Existing direct GA4 instrumentation remains active until it is migrated to GTM.
   window.gtag?.('event', name, parameters);
-  if (name === 'whatsapp_click' || name === 'enquiry_handoff') {
+  if (name === 'whatsapp_click' || (name === 'enquiry_handoff' && parameters.channel === 'email')) {
     metaTrack('Contact', { content_category: parameters.journey || 'direct_contact' });
   } else if (Object.values(completionEvents).includes(name)) {
     metaTrack('Lead', { content_category: parameters.journey || 'enquiry' });
