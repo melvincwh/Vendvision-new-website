@@ -1,12 +1,28 @@
 'use strict';
 
 const ga4 = document.querySelector('meta[name="vendvision-ga4"]').content;
-if (ga4 && location.origin === 'https://www.vendvision.co') {
+const PRODUCTION_SITE = location.origin === 'https://www.vendvision.co';
+function storedConsent(key) {
+  try { return localStorage.getItem(key) === 'granted'; } catch { return false; }
+}
+function permittedPageLocation() {
+  // Preserve attribution without forwarding arbitrary URL query values to GA4.
+  const allowed = /^(utm_[a-z0-9_]+|gclid|gbraid|wbraid|dclid|fbclid|msclkid|li_fat_id)$/i;
+  const url = new URL(location.href);
+  for (const key of [...url.searchParams.keys()]) {
+    if (!allowed.test(key)) url.searchParams.delete(key);
+  }
+  url.hash = '';
+  return url.href;
+}
+if (ga4 && PRODUCTION_SITE && storedConsent('vendvision_analytics_consent_v1')) {
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
   window.gtag('js', new Date());
+  // This is the only GA4 configuration on the website. Avoid adding another
+  // GA4 page_view tag in GTM until the direct integration is retired.
   window.gtag('config', ga4, {
-    page_location: location.origin + location.pathname,
+    page_location: permittedPageLocation(),
     allow_google_signals: false
   });
   const script = document.createElement('script');
@@ -14,7 +30,6 @@ if (ga4 && location.origin === 'https://www.vendvision.co') {
   script.async = true;
   document.head.append(script);
 }
-
 
 /*
  * Meta browser Pixel: consent-gated, production-only.
@@ -64,15 +79,18 @@ function enableClarity() {
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window,document,'clarity','script',CLARITY_ID);
   // Clarity loads only after analytics opt-in. No PII is passed in custom events.
-  window.clarity('consentv2', { analytics_Storage: 'granted', ad_Storage: 'denied' });
+  window.clarity('consentv2', { analytics_Storage: 'granted', ad_Storage: metaConsent() === 'granted' ? 'granted' : 'denied' });
 }
 function savePrivacy(analytics, marketing) {
-  const wasMarketing = metaConsent();
-  const wasAnalytics = analyticsConsent();
+  const previousAnalytics = analyticsConsent();
+  const previousMarketing = metaConsent();
   try {
     localStorage.setItem(ANALYTICS_CONSENT_KEY, analytics ? 'granted' : 'denied');
     localStorage.setItem(META_CONSENT_KEY, marketing ? 'granted' : 'denied');
-  } catch {}
+  } catch {
+    // If storage is blocked, do not attempt to enable optional tracking.
+    return;
+  }
   const notice = document.querySelector('[data-meta-consent]');
   if (notice) notice.hidden = true;
   window.dataLayer = window.dataLayer || [];
@@ -81,14 +99,18 @@ function savePrivacy(analytics, marketing) {
     analytics_storage: analytics ? 'granted' : 'denied',
     ad_storage: marketing ? 'granted' : 'denied'
   });
-  if ((wasMarketing === 'granted' && !marketing) ||
-      (wasAnalytics === 'granted' && !analytics)) {
-    // Stop already-running optional scripts after consent withdrawal.
+  window.gtag?.('consent', 'update', {
+    analytics_storage: analytics ? 'granted' : 'denied',
+    ad_storage: marketing ? 'granted' : 'denied',
+    ad_user_data: marketing ? 'granted' : 'denied',
+    ad_personalization: marketing ? 'granted' : 'denied'
+  });
+  if ((previousAnalytics === 'granted') !== analytics ||
+      (previousMarketing === 'granted') !== marketing) {
+    // Reinitialize optional tags with the chosen preferences and stop tags
+    // promptly after withdrawal. Fresh page view is counted only on opt-in.
     location.reload();
-    return;
   }
-  if (marketing) enableMetaPixel();
-  if (analytics) enableClarity();
 }
 function displayMetaConsent() {
   if (!META_PRODUCTION) return;
