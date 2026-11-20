@@ -120,7 +120,7 @@ function displayMetaConsent() {
   notice.className = 'vv-privacy-choice';
   notice.setAttribute('data-meta-consent', '');
   notice.setAttribute('aria-label', 'Vendvision privacy preferences');
-  notice.innerHTML = '<div><strong>Privacy preferences</strong><p>Choose optional website analytics (Microsoft Clarity) and marketing measurement (Meta Pixel). Essential website functions do not require these choices.</p><label class="vv-privacy-toggle"><input type="checkbox" data-vv-analytics> Analytics and session insights</label><label class="vv-privacy-toggle"><input type="checkbox" data-vv-marketing> Marketing measurement</label><div class="vv-privacy-actions"><button type="button" data-vv-reject>Reject optional</button><button type="button" data-vv-save>Save choices</button><button type="button" data-vv-accept>Accept all</button></div></div>';
+  notice.innerHTML = '<div><strong>Privacy preferences</strong><p>Choose optional analytics (Google Analytics, Tag Manager measurement and Microsoft Clarity) and marketing measurement (Meta Pixel and advertising tags). Essential website functions remain available without optional cookies.</p><label class="vv-privacy-toggle"><input type="checkbox" data-vv-analytics> Analytics and session insights</label><label class="vv-privacy-toggle"><input type="checkbox" data-vv-marketing> Marketing measurement</label><div class="vv-privacy-actions"><button type="button" data-vv-reject>Reject optional</button><button type="button" data-vv-save>Save choices</button><button type="button" data-vv-accept>Accept all</button></div></div>';
   notice.hidden = analyticsConsent() !== null && metaConsent() !== null;
   document.body.append(notice);
   const a = notice.querySelector('[data-vv-analytics]');
