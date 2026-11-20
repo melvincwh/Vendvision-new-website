@@ -324,3 +324,7 @@ footer { border-top: 5px solid var(--brand); }
 .vv-privacy-actions button[data-meta-choice="granted"] { background:#a70056; color:#fff; }
 .vv-privacy-settings { border:0; background:none; color:inherit; font:inherit; font-size:.82rem; text-decoration:underline; cursor:pointer; padding:12px 0; }
 @media(max-width:540px) { .vv-privacy-choice { bottom:8px; left:8px; right:8px; padding:14px 16px; } }
+
+.vv-privacy-toggle { display:flex; align-items:center; gap:.65rem; padding:.35rem 0; font-size:.9rem; cursor:pointer; }
+.vv-privacy-toggle input { width:17px; height:17px; accent-color:#a70056; }
+.vv-privacy-actions button[data-vv-accept] { background:#a70056; color:#fff; }
