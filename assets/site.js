@@ -16,6 +16,13 @@ if (ga4 && location.origin === 'https://www.vendvision.co') {
 }
 
 function track(name, parameters) {
+  // Non-PII event payload for future GTM custom-event triggers.
+  // Do not include form values, email addresses, phone numbers or visitor names.
+  if (location.origin === 'https://www.vendvision.co') {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'vv_' + name, ...parameters });
+  }
+  // Existing direct GA4 instrumentation remains active until it is migrated to GTM.
   window.gtag?.('event', name, parameters);
 }
 
