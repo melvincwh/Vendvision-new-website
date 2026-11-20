@@ -409,17 +409,36 @@ def render(path, record, mode):
     analytics_id = DATA['production_ga4'] if mode == 'production' and index else ''
     # GTM is restricted to the canonical production hostname, excluding pages.dev previews.
     gtm_id = 'GTM-P9J6DT9F' if mode == 'production' and index else ''
+    # Consent bootstrap runs before GTM. Optional tags do not load until a
+    # visitor has granted analytics or marketing consent on the production site.
     gtm_head = ('''<script>
-(function(w,d,s,l,i) {
+(function(w,d,s,l,id) {
   if (w.location.hostname !== 'www.vendvision.co') return;
-  w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-  var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!=='dataLayer'?'&l='+l:'';
-  j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-  f.parentNode.insertBefore(j,f);
+  function preference(key) {
+    try { return w.localStorage.getItem(key) === 'granted'; } catch(e) { return false; }
+  }
+  var analytics = preference('vendvision_analytics_consent_v1');
+  var marketing = preference('vendvision_meta_consent_v1');
+  w[l] = w[l] || [];
+  w.gtag = w.gtag || function(){w[l].push(arguments);};
+  w.gtag('consent', 'default', {
+    analytics_storage: analytics ? 'granted' : 'denied',
+    ad_storage: marketing ? 'granted' : 'denied',
+    ad_user_data: marketing ? 'granted' : 'denied',
+    ad_personalization: marketing ? 'granted' : 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+  if (!analytics && !marketing) return;
+  w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  var first=d.getElementsByTagName(s)[0], tag=d.createElement(s);
+  tag.async=true;
+  tag.src='https://www.googletagmanager.com/gtm.js?id='+encodeURIComponent(id);
+  first.parentNode.insertBefore(tag,first);
 })(window,document,'script','dataLayer',''' + json.dumps(gtm_id) + ''');
 </script>''') if gtm_id else ''
-    # Noscript fallback cannot safely distinguish preview hosts without JavaScript.
-    # Omitting it avoids firing GTM on pages.dev while retaining full JS-enabled coverage.
+    # No noscript GTM fallback: it cannot enforce optional consent on JS-disabled browsers.
     delivery_path = DATA.get('production_delivery_path') if mode == 'production' else None
     if delivery_path and not re.fullmatch(r'/api/[a-z0-9/-]+', delivery_path):
         raise ValueError('Use a relative /api/ path for the production delivery service.')
