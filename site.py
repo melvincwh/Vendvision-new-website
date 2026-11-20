@@ -407,12 +407,25 @@ def render(path, record, mode):
             schema[-1]['dateModified'] = article['updated_at']
     schema_json = json.dumps({'@context': 'https://schema.org', '@graph': schema}, ensure_ascii=False).replace('<', '\\u003c')
     analytics_id = DATA['production_ga4'] if mode == 'production' and index else ''
+    # GTM is restricted to the canonical production hostname, excluding pages.dev previews.
+    gtm_id = 'GTM-P9J6DT9F' if mode == 'production' and index else ''
+    gtm_head = ('''<script>
+(function(w,d,s,l,i) {
+  if (w.location.hostname !== 'www.vendvision.co') return;
+  w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!=='dataLayer'?'&l='+l:'';
+  j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+  f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer',''' + json.dumps(gtm_id) + ''');
+</script>''') if gtm_id else ''
+    # Noscript fallback cannot safely distinguish preview hosts without JavaScript.
+    # Omitting it avoids firing GTM on pages.dev while retaining full JS-enabled coverage.
     delivery_path = DATA.get('production_delivery_path') if mode == 'production' else None
     if delivery_path and not re.fullmatch(r'/api/[a-z0-9/-]+', delivery_path):
         raise ValueError('Use a relative /api/ path for the production delivery service.')
     current = path if not article else '/blog.html'
     return f'''<!doctype html>
-<html lang="en-MY"><head><meta charset="utf-8">
+<html lang="en-MY"><head><meta charset="utf-8">{gtm_head}
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{escape(title)}</title><meta name="description" content="{escape(desc)}">
 <meta name="robots" content="{robots}"><link rel="canonical" href="{escape(canonical)}">
