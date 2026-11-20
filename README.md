@@ -38,3 +38,5 @@ The local preview is `python3 site.py preview --port 8770`.
 ## Deployment refresh
 
 The `main` branch is the Cloudflare Pages production source. A new push should trigger a Pages rebuild when the Git integration is enabled; confirm deployment success in the Cloudflare dashboard.
+
+Deployment note: refresh Cloudflare Pages from `main` with the current machine catalogue and branded catalogue headers. Machine-photo logo replacements remain pending asset edits.
