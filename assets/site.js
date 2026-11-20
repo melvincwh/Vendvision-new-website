@@ -13,7 +13,7 @@ function attribution() {
     const query = new URLSearchParams(location.search);
     const values = {};
     for (const key of campaignKeys) {
-      const value = query.get('utm_' + key);
+      const value = key === 'campaign' ? query.get('utm_id') || query.get('utm_campaign') : query.get('utm_' + key);
       if (value && /^[\w .~+-]{1,100}$/.test(value)) values[key] = value;
     }
     if (Object.keys(values).length) sessionStorage.setItem(attributionKey, JSON.stringify(values));
@@ -120,17 +120,17 @@ function savePrivacy(analytics, marketing) {
   });
   const notice = document.querySelector('[data-meta-consent]');
   if (notice) notice.hidden = true;
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: 'vv_privacy_updated',
-    analytics_storage: analytics ? 'granted' : 'denied',
-    ad_storage: marketing ? 'granted' : 'denied'
-  });
   window.gtag?.('consent', 'update', {
     analytics_storage: analytics ? 'granted' : 'denied',
     ad_storage: marketing ? 'granted' : 'denied',
     ad_user_data: marketing ? 'granted' : 'denied',
     ad_personalization: marketing ? 'granted' : 'denied'
+  });
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'vv_privacy_updated',
+    analytics_storage: analytics ? 'granted' : 'denied',
+    ad_storage: marketing ? 'granted' : 'denied'
   });
   if ((previousAnalytics === 'granted') !== analytics ||
       (previousMarketing === 'granted') !== marketing) {

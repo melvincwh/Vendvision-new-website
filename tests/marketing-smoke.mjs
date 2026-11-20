@@ -20,6 +20,7 @@ for(const A of [false,true]) for(const M of [false,true]){
  assert.equal(c.dataLayer.filter(x=>x[0]==='event').length,A?1:0);assert.equal(c.dataLayer.filter(x=>x.event==='vv_whatsapp_click').length,A?1:0);
  if(M)assert.equal(c.fbq.queue.filter(x=>x[1]==='Contact').length,1);
  assert.equal(vm.runInContext('attribution().campaign',c),A?'yearend':undefined);
+ loc.search='?utm_source=meta&utm_medium=paid&utm_id=120248016393100317&utm_campaign=yearend';assert.equal(vm.runInContext('attribution().campaign',c),A?'120248016393100317':undefined);
  loc.search='';assert.equal(vm.runInContext('attribution().source',c),A?'meta':undefined);
  vm.runInContext('savePrivacy(false,false)',c);assert.equal(ss.getItem('vv_session_campaign_v1'),null);
 }
