@@ -25,9 +25,96 @@ async function servePage(request, env, key, status = 200) {
   return new Response(response.body, { status, headers });
 }
 
+// Authenticated, server-to-server Meta CAPI for confirmed CRM outcomes.
+// Disabled until both secrets are configured in Cloudflare Pages.
+// Do NOT invoke this endpoint directly from website/browser JavaScript.
+const META_DATASET_ID = '1870143103988077';
+const META_GRAPH_VERSION = 'v25.0';
+const CAPI_ALLOWED_EVENTS = new Set(['Lead', 'Purchase']);
+function jsonResponse(status, result) {
+  return new Response(JSON.stringify(result), {
+    status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
+  });
+}
+async function hashIdentity(value) {
+  const bytes = new TextEncoder().encode(value.trim().toLowerCase());
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+}
+async function handleMetaCapi(request, env, url) {
+  if (url.hostname !== canonicalHost) return jsonResponse(404, { error: 'Not found' });
+  if (request.method !== 'POST') return jsonResponse(405, { error: 'Method not allowed' });
+  if (!env.META_CAPI_ACCESS_TOKEN || !env.META_CAPI_CRM_SECRET) {
+    return jsonResponse(503, { error: 'CAPI not configured' });
+  }
+  const auth = request.headers.get('Authorization') || '';
+  if (auth !== 'Bearer ' + env.META_CAPI_CRM_SECRET) {
+    return jsonResponse(401, { error: 'Unauthorized' });
+  }
+  const length = Number(request.headers.get('Content-Length') || 0);
+  if (length > 8192) return jsonResponse(413, { error: 'Payload too large' });
+  let payload;
+  try {
+    const body = await request.text();
+    if (body.length > 8192) throw new Error('Too large');
+    payload = JSON.parse(body);
+  } catch {
+    return jsonResponse(400, { error: 'Invalid JSON' });
+  }
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload) ||
+      payload.marketing_consent !== true ||
+      !CAPI_ALLOWED_EVENTS.has(payload.event_name) ||
+      typeof payload.event_id !== 'string' || !/^[a-zA-Z0-9_-]{8,120}$/.test(payload.event_id)) {
+    return jsonResponse(400, { error: 'Invalid event or marketing consent absent' });
+  }
+  const eventTime = Number(payload.event_time);
+  const now = Math.floor(Date.now() / 1000);
+  if (!Number.isInteger(eventTime) || eventTime > now + 300 || eventTime < now - 604800) {
+    return jsonResponse(400, { error: 'Invalid event time' });
+  }
+  const email = typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '';
+  const phone = typeof payload.phone === 'string' ? payload.phone.replace(/\D/g, '') : '';
+  if ((!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && phone.length < 8) {
+    return jsonResponse(400, { error: 'Valid email or phone required for matching' });
+  }
+  const userData = {};
+  if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) userData.em = [await hashIdentity(email)];
+  if (phone.length >= 8 && phone.length <= 16) userData.ph = [await hashIdentity(phone)];
+  if (Object.keys(userData).length === 0) return jsonResponse(400, { error: 'No valid matching identifier' });
+  // CRM lifecycle milestones are not automatically browser website actions.
+  // They must not reuse browser event IDs unless the event is genuinely identical.
+  const event = {
+    event_name: payload.event_name,
+    event_time: eventTime,
+    event_id: payload.event_id,
+    action_source: 'system_generated',
+    user_data: userData
+  };
+  if (payload.event_name === 'Purchase') {
+    const value = Number(payload.value);
+    if (!Number.isFinite(value) || value <= 0 || value > 100000000 ||
+        payload.currency !== 'MYR') return jsonResponse(400, { error: 'Valid MYR purchase value required' });
+    event.custom_data = { currency: 'MYR', value };
+  }
+  const apiUrl = 'https://graph.facebook.com/' + META_GRAPH_VERSION + '/' + META_DATASET_ID + '/events';
+  let response;
+  try {
+    response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + env.META_CAPI_ACCESS_TOKEN },
+      body: JSON.stringify({ data: [event], ...(env.META_CAPI_TEST_EVENT_CODE ? { test_event_code: env.META_CAPI_TEST_EVENT_CODE } : {}) })
+    });
+  } catch {
+    return jsonResponse(502, { error: 'Meta API unavailable' });
+  }
+  if (!response.ok) return jsonResponse(502, { error: 'Meta rejected event', meta_status: response.status });
+  return jsonResponse(200, { accepted: true, event_id: event.event_id });
+}
+
 async function route(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
+  if (path === '/api/meta-capi') return handleMetaCapi(request, env, url);
   const legacy = path === '/blog-post.html' ? url.searchParams.getAll('slug') : [];
   const legacyTarget = legacy.length === 1 && Object.hasOwn(SETTINGS.articleRedirects, legacy[0])
     ? SETTINGS.articleRedirects[legacy[0]] : null;
