@@ -5,6 +5,27 @@ const PRODUCTION_SITE = location.origin === 'https://www.vendvision.co';
 function storedConsent(key) {
   try { return localStorage.getItem(key) === 'granted'; } catch { return false; }
 }
+const campaignKeys = ['source', 'medium', 'campaign'];
+const attributionKey = 'vv_session_campaign_v1';
+function attribution() {
+  if (!PRODUCTION_SITE || !storedConsent('vendvision_analytics_consent_v1')) return {};
+  try {
+    const query = new URLSearchParams(location.search);
+    const values = {};
+    for (const key of campaignKeys) {
+      const value = query.get('utm_' + key);
+      if (value && /^[\w .~+-]{1,100}$/.test(value)) values[key] = value;
+    }
+    if (Object.keys(values).length) sessionStorage.setItem(attributionKey, JSON.stringify(values));
+    return JSON.parse(sessionStorage.getItem(attributionKey) || '{}');
+  } catch { return {}; }
+}
+attribution();
+let repeated = {};
+try {
+  repeated = JSON.parse(sessionStorage.getItem('vv_consent_reload') || '{}') || {};
+  sessionStorage.removeItem('vv_consent_reload');
+} catch {}
 function permittedPageLocation() {
   // Preserve attribution without forwarding arbitrary URL query values to GA4.
   const allowed = /^(utm_[a-z0-9_]+|gclid|gbraid|wbraid|dclid|fbclid|msclkid|li_fat_id)$/i;
@@ -22,6 +43,7 @@ if (ga4 && PRODUCTION_SITE && storedConsent('vendvision_analytics_consent_v1')) 
   // This is the only GA4 configuration on the website. Avoid adding another
   // GA4 page_view tag in GTM until the direct integration is retired.
   window.gtag('config', ga4, {
+    send_page_view: !repeated.analytics,
     page_location: permittedPageLocation(),
     allow_google_signals: false
   });
@@ -61,7 +83,7 @@ function enableMetaPixel() {
   }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   window.fbq('init', META_PIXEL_ID);
   metaPixelReady = true;
-  metaTrack('PageView');
+  if (!repeated.marketing) metaTrack('PageView');
 }
 const CLARITY_ID = 'gj29wj0mfe';
 const ANALYTICS_CONSENT_KEY = 'vendvision_analytics_consent_v1';
@@ -91,6 +113,11 @@ function savePrivacy(analytics, marketing) {
     // If storage is blocked, do not attempt to enable optional tracking.
     return;
   }
+  if (!analytics) { try { sessionStorage.removeItem(attributionKey); } catch {} }
+  if (!marketing && metaPixelReady) window.fbq('consent', 'revoke');
+  if (clarityStarted) window.clarity('consentv2', {
+    analytics_Storage: analytics ? 'granted' : 'denied', ad_Storage: marketing ? 'granted' : 'denied'
+  });
   const notice = document.querySelector('[data-meta-consent]');
   if (notice) notice.hidden = true;
   window.dataLayer = window.dataLayer || [];
@@ -109,6 +136,12 @@ function savePrivacy(analytics, marketing) {
       (previousMarketing === 'granted') !== marketing) {
     // Reinitialize optional tags with the chosen preferences and stop tags
     // promptly after withdrawal. Fresh page view is counted only on opt-in.
+    try {
+      sessionStorage.setItem('vv_consent_reload', JSON.stringify({
+        analytics: analytics && previousAnalytics === 'granted',
+        marketing: marketing && previousMarketing === 'granted'
+      }));
+    } catch {}
     location.reload();
   }
 }
@@ -149,16 +182,15 @@ if (document.readyState === 'loading') {
 function track(name, parameters) {
   // Non-PII event payload for future GTM custom-event triggers.
   // Do not include form values, email addresses, phone numbers or visitor names.
-  if (location.origin === 'https://www.vendvision.co') {
+  if (PRODUCTION_SITE && analyticsConsent() === 'granted') {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'vv_' + name, ...parameters });
+    window.gtag?.('event', name, { ...parameters, send_to: ga4 });
   }
   // Existing direct GA4 instrumentation remains active until it is migrated to GTM.
-  window.gtag?.('event', name, parameters);
+
   if (name === 'whatsapp_click' || (name === 'enquiry_handoff' && parameters.channel === 'email')) {
     metaTrack('Contact', { content_category: parameters.journey || 'direct_contact' });
-  } else if (Object.values(completionEvents).includes(name)) {
-    metaTrack('Lead', { content_category: parameters.journey || 'enquiry' });
   }
 }
 
@@ -179,35 +211,53 @@ const completionEvents = {
 const deliveryPath = location.origin === 'https://www.vendvision.co'
   ? document.querySelector('meta[name="vendvision-delivery"]').content : '';
 
+const attempts = new WeakMap();
+const sending = new WeakSet();
 async function deliver(form, journey, fields) {
   const status = form.querySelector('[role="status"]');
   const button = form.querySelector('button[value="deliver"]');
+  if (sending.has(form)) return;
+  sending.add(form);
   button.disabled = true;
   status.hidden = false;
   status.textContent = 'Sending your enquiry…';
   try {
+    const payload = Object.fromEntries(fields);
+    const signature = JSON.stringify(payload);
+    let attempt = attempts.get(form);
+    if (!attempt || attempt.signature !== signature) {
+      attempt = {signature, id:crypto.randomUUID()};
+      attempts.set(form, attempt);
+    }
     const response = await fetch(deliveryPath, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ journey, fields: Object.fromEntries(fields) }),
+      body: JSON.stringify({ id:attempt.id, journey, fields:payload, attribution:attribution(), analytics:analyticsConsent() === 'granted', marketing:metaConsent() === 'granted' }),
       signal: AbortSignal.timeout(12000)
     });
     if (!response.ok || (await response.json()).delivered !== true) {
       throw new Error('Delivery unconfirmed');
     }
-    track(completionEvents[journey], { journey });
+    attempts.delete(form);
+    try { track(completionEvents[journey], { journey }); } catch { /* Receipt already confirmed. */ }
     form.reset();
     status.textContent = 'Vendvision received your enquiry.';
   } catch {
     status.textContent = 'Delivery could not be confirmed. Please use WhatsApp or email to follow up.';
   } finally {
+    sending.delete(form);
     button.disabled = false;
   }
 }
 
-for (const form of document.querySelectorAll('[data-enquiry]')) {
+const enquiryForms = document.querySelectorAll('[data-enquiry]');
+const captureAvailable = deliveryPath && enquiryForms.length
+  ? fetch(deliveryPath, {signal:AbortSignal.timeout(5000)}).then(async r => r.ok && (await r.json()).available === true).catch(() => false)
+  : Promise.resolve(false);
+for (const form of enquiryForms) {
   form.hidden = false;
-  if (deliveryPath) {
+  captureAvailable.then(available => {
+    if (!available) return;
     const submit = document.createElement('button');
     submit.type = 'submit';
     submit.name = 'channel';
@@ -216,7 +266,7 @@ for (const form of document.querySelectorAll('[data-enquiry]')) {
     submit.textContent = 'Send enquiry';
     form.querySelector('.actions').prepend(submit);
     form.querySelector('.form-note').textContent = 'Send your enquiry here, or open a draft in WhatsApp or email.';
-  }
+  });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const channel = event.submitter?.value || 'email';

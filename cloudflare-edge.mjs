@@ -108,12 +108,52 @@ async function handleMetaCapi(request, env, url) {
     return jsonResponse(502, { error: 'Meta API unavailable' });
   }
   if (!response.ok) return jsonResponse(502, { error: 'Meta rejected event', meta_status: response.status });
+  const receipt = await response.json().catch(() => null);
+  if (receipt?.events_received !== 1) return jsonResponse(502, { error: 'Meta receipt unconfirmed' });
   return jsonResponse(200, { accepted: true, event_id: event.event_id });
+}
+
+async function handleEnquiry(request, env, url) {
+  if (url.origin !== SETTINGS.origin) return jsonResponse(404, {});
+  if (!env.LEADS_DB) return jsonResponse(503, {available:false});
+  try {
+    if (request.method === 'GET') {
+      await env.LEADS_DB.prepare('SELECT id FROM website_enquiries LIMIT 0').all();
+      return jsonResponse(200, {available:true});
+    }
+    if (request.method !== 'POST') return jsonResponse(405, {});
+    if (request.headers.get('Origin') !== SETTINGS.origin) return jsonResponse(403, {});
+    if (!request.headers.get('Content-Type')?.startsWith('application/json')) return jsonResponse(415, {});
+    const size = Number(request.headers.get('Content-Length'));
+    if (!Number.isInteger(size) || size < 1 || size > 16384) return jsonResponse(413, {});
+    let p;
+    try { p = await request.json(); } catch { return jsonResponse(400, {}); }
+    if (!p || !/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(p.id) ||
+        !['campaign','machine_quote','location','pantry','operator'].includes(p.journey) ||
+        !p.fields || typeof p.fields !== 'object' || Array.isArray(p.fields)) return jsonResponse(400, {});
+    const entries = Object.entries(p.fields);
+    if (entries.length > 18 || entries.some(([k,v]) => k.length > 72 || typeof v !== 'string' || v.length > 600) ||
+        !p.fields['Your name']?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.fields['Work email'])) return jsonResponse(400, {});
+    const fieldData = JSON.stringify(p.fields);
+    const label = k => {
+      const v = p.analytics === true && p.attribution?.[k];
+      return typeof v === 'string' && /^[\w .~+-]{1,100}$/.test(v) ? v : '(unknown)';
+    };
+    const db = env.LEADS_DB;
+    await db.prepare('INSERT INTO website_enquiries (id,journey,fields_json,source,medium,campaign,analytics_consent,marketing_consent) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING')
+      .bind(p.id,p.journey,fieldData,label('source'),label('medium'),label('campaign'),Number(p.analytics === true),Number(p.marketing === true)).run();
+    const row = await db.prepare('SELECT journey,fields_json FROM website_enquiries WHERE id=?').bind(p.id).first();
+    if (row?.journey !== p.journey || row.fields_json !== fieldData) return jsonResponse(409, {});
+    return jsonResponse(200, {delivered:true,id:p.id});
+  } catch {
+    return jsonResponse(503, {available:false});
+  }
 }
 
 async function route(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
+  if (path === '/api/enquiries') return handleEnquiry(request, env, url);
   if (path === '/api/meta-capi') return handleMetaCapi(request, env, url);
   const legacy = path === '/blog-post.html' ? url.searchParams.getAll('slug') : [];
   const legacyTarget = legacy.length === 1 && Object.hasOwn(SETTINGS.articleRedirects, legacy[0])
