@@ -312,3 +312,15 @@ footer { border-top: 5px solid var(--brand); }
 .catalog-spec th { width: 38%; }
 @media (max-width: 660px) { .catalog-model { grid-template-columns: 1fr; } .catalog-model figure { max-width: 420px; width: 100%; margin: auto; } }
 .finish-photo { display: block; width: 100%; aspect-ratio: 1; mix-blend-mode: multiply; }
+
+
+/* Optional Meta advertising consent: neutral and easy to dismiss. */
+.vv-privacy-choice { position:fixed; z-index:1000; bottom:16px; left:16px; right:16px; max-width:520px; background:#fff; color:#252126; border:1px solid #d5cbd0; border-radius:12px; padding:18px 20px; box-shadow:0 12px 38px rgba(0,0,0,.18); font:inherit; }
+.vv-privacy-choice[hidden] { display:none !important; }
+.vv-privacy-choice strong { display:block; font-weight:750; margin-bottom:.25rem; }
+.vv-privacy-choice p { font-size:.9rem; line-height:1.5; margin:0 0 12px; }
+.vv-privacy-actions { display:flex; flex-wrap:wrap; gap:9px; }
+.vv-privacy-actions button { cursor:pointer; border:1px solid #a70056; border-radius:6px; padding:9px 13px; font:inherit; font-size:.86rem; font-weight:650; background:#fff; color:#a70056; }
+.vv-privacy-actions button[data-meta-choice="granted"] { background:#a70056; color:#fff; }
+.vv-privacy-settings { border:0; background:none; color:inherit; font:inherit; font-size:.82rem; text-decoration:underline; cursor:pointer; padding:12px 0; }
+@media(max-width:540px) { .vv-privacy-choice { bottom:8px; left:8px; right:8px; padding:14px 16px; } }
