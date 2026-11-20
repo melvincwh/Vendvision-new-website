@@ -34,3 +34,7 @@ Cloudflare Pages requires the apex DNS zone and the Pages project in the same Cl
 The `pages.dev` host stays noindexed, including branch previews. GA4 initialises only on the canonical production origin. Contact routes use WhatsApp and email drafts.
 
 The local preview is `python3 site.py preview --port 8770`.
+
+## Deployment refresh
+
+The `main` branch is the Cloudflare Pages production source. A new push should trigger a Pages rebuild when the Git integration is enabled; confirm deployment success in the Cloudflare dashboard.
