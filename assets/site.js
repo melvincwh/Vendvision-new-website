@@ -15,6 +15,74 @@ if (ga4 && location.origin === 'https://www.vendvision.co') {
   document.head.append(script);
 }
 
+
+/*
+ * Meta browser Pixel: consent-gated, production-only.
+ * Keep this Pixel ID out of GTM to avoid double-firing the base Pixel.
+ * Do not pass enquiry form contents, names, emails or phone numbers to Meta.
+ * CAPI is NOT enabled by this browser-only integration.
+ */
+const META_PIXEL_ID = '1870143103988077';
+const META_CONSENT_KEY = 'vendvision_meta_consent_v1';
+const META_PRODUCTION = location.origin === 'https://www.vendvision.co';
+let metaPixelReady = false;
+function metaConsent() {
+  try { return localStorage.getItem(META_CONSENT_KEY); }
+  catch { return null; }
+}
+function metaTrack(name, data = {}) {
+  if (META_PRODUCTION && metaPixelReady && metaConsent() === 'granted') {
+    window.fbq('track', name, data);
+  }
+}
+function enableMetaPixel() {
+  if (!META_PRODUCTION || metaPixelReady || metaConsent() !== 'granted') return;
+  !function(f,b,e,v,n,t,s){
+    if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;
+    s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+  }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  window.fbq('init', META_PIXEL_ID);
+  metaPixelReady = true;
+  metaTrack('PageView');
+}
+function setMetaConsent(value) {
+  try { localStorage.setItem(META_CONSENT_KEY, value); } catch {}
+  const notice = document.querySelector('[data-meta-consent]');
+  if (notice) notice.hidden = true;
+  if (value === 'granted') enableMetaPixel();
+  // A revoked choice must take effect immediately. Reload to clear the
+  // current in-memory Pixel; never schedule another Pixel request on rejection.
+  if (value === 'denied' && metaPixelReady) location.reload();
+}
+function displayMetaConsent() {
+  if (!META_PRODUCTION) return;
+  if (metaConsent() === 'granted') enableMetaPixel();
+  const notice = document.createElement('aside');
+  notice.className = 'vv-privacy-choice';
+  notice.setAttribute('data-meta-consent', '');
+  notice.setAttribute('aria-label', 'Optional Meta advertising cookies');
+  notice.innerHTML = '<div><strong>Optional advertising cookies</strong><p>Vendvision can use Meta Pixel to measure Facebook and Instagram ad visits and contact clicks. Choose whether to allow this optional tracking. You can change your choice anytime.</p><div class="vv-privacy-actions"><button type="button" data-meta-choice="denied">Reject optional</button><button type="button" data-meta-choice="granted">Accept optional</button></div></div>';
+  notice.hidden = metaConsent() !== null;
+  document.body.append(notice);
+  notice.querySelectorAll('[data-meta-choice]').forEach(button => {
+    button.addEventListener('click', () => setMetaConsent(button.dataset.metaChoice));
+  });
+  const settings = document.createElement('button');
+  settings.type = 'button';
+  settings.className = 'vv-privacy-settings';
+  settings.textContent = 'Advertising cookie settings';
+  settings.addEventListener('click', () => { notice.hidden = false; });
+  document.querySelector('footer')?.append(settings);
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', displayMetaConsent);
+} else {
+  displayMetaConsent();
+}
+
 function track(name, parameters) {
   // Non-PII event payload for future GTM custom-event triggers.
   // Do not include form values, email addresses, phone numbers or visitor names.
@@ -24,6 +92,11 @@ function track(name, parameters) {
   }
   // Existing direct GA4 instrumentation remains active until it is migrated to GTM.
   window.gtag?.('event', name, parameters);
+  if (name === 'whatsapp_click' || name === 'enquiry_handoff') {
+    metaTrack('Contact', { content_category: parameters.journey || 'direct_contact' });
+  } else if (Object.values(completionEvents).includes(name)) {
+    metaTrack('Lead', { content_category: parameters.journey || 'enquiry' });
+  }
 }
 
 document.addEventListener('click', (event) => {
