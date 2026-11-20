@@ -64,6 +64,10 @@ def grid(tiles):
     return '<div class="catalog-grid">' + ''.join(tiles) + '</div>'
 
 
+def catalogue_brand():
+    return '<div class="catalog-brand"><img src="/assets/vendvision-official-horizontal.svg" alt="Vendvision" loading="eager"></div>'
+
+
 def crumb(path, label):
     return f'<a class="catalog-back" href="{path}">← {escape(label)}</a>'
 
@@ -79,10 +83,10 @@ def make_catalogue(page):
         heading = crumb(BASE, 'All categories') + f'<h1>{escape(label)}</h1>'
         tiles = [tile(p, p['name'], product_path(p), 'View machine') for p in subset]
         page(path, label + ' | Vendvision Machine Catalogue', 'Browse machines and request a model-specific quotation.',
-             f'<section class="wrap catalog-section">{heading}{grid(tiles)}</section>')
+             f'<section class="wrap catalog-section">' + catalogue_brand() + heading + grid(tiles) + '</section>')
     page(BASE, 'Vending Machine Catalogue Malaysia | Vendvision',
          'Explore vending machines by application, check technical specifications and enquire about pricing.',
-         '<section class="wrap catalog-section">' + crumb('/services.html', 'Vending machines') +
+         '<section class="wrap catalog-section">' + catalogue_brand() + crumb('/services.html', 'Vending machines') +
          '<h1>Machine catalogue</h1><p class="lead">Choose what you want to vend. Explore the machines and request pricing for your site.</p>' +
          grid(directory) + '</section>')
     for p in products:
@@ -101,6 +105,6 @@ def make_catalogue(page):
         if p['id'] == '752':
             specs = '<p>Enquire for the matching technical sheet. The available sheet identifies a different model.</p>'
         body = ('<section class="wrap catalog-section">' + crumb(category_path(label), label) +
-                '<div class="catalog-model"><figure class="catalog-photo">' + photo(p) +
+                catalogue_brand() + '<div class="catalog-model"><figure class="catalog-photo">' + photo(p) +
                 '</figure><div><h1>' + escape(name) + '</h1>' + notes + action + specs + '</div></div></section>')
         page(product_path(p), name + ' | Vendvision', 'Machine specifications and pricing enquiries for ' + name + '.', body)
