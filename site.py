@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build and preview Vendvision’s static marketing site using Python's standard library."""
 import argparse
-from datetime import date
+from machine_catalogue import make_catalogue
 from functools import partial
 from html import escape
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -43,7 +43,7 @@ PHOTO_DESCRIPTIONS = {'collection.webp': 'Shopper collecting a chilled can from 
  'energy-check.webp': 'Checking power consumption at a refrigerated cabinet',
  'cost-review.webp': 'Planning machine costs with receipts and a calculator',
  'creative-studio.webp': 'Preparing a beverage photograph for a screen campaign',
- 'full-touchscreen.webp': 'Vendvision full-front touchscreen machine in two catalogue views',
+ '50sp-vendvision.webp': 'Vendvision full-front touchscreen machine in two catalogue views',
  'extracted-p2-0.jpeg': 'The Vendvision team',
  'founder.jpg': 'Melvin Chan, Vendvision founder',
  'v22-lobby-560.webp': 'V22 vending machine in an illustrative lobby campaign'}
@@ -133,7 +133,25 @@ def insight_links(slugs):
     ) + '</ul>'
 
 
+def machine_comparison():
+    photos = {'V22': 'v22-reference.png', '50SP': '50sp-vendvision.webp'}
+    cards = []
+    for model in DATA['models']:
+        name = escape(model['name'])
+        cards.append(f"""<article class="compare-model" data-model="{name}">
+          <div class="compare-info"><h3>{name}</h3><p>{escape(model['display'])}</p>
+          <dl><dt>Product choices</dt><dd>Up to {model['choices']}</dd>
+          <dt>Capacity</dt><dd>Approx. {model['capacity']} items</dd></dl></div>
+          <div class="compare-image"><img src="/assets/{photos[name]}" loading="lazy"
+               alt="Vendvision {name} vending machine"></div></article>""")
+    return f"""<section class="section machine-comparison" id="compare-machines">
+      <div class="wrap"><div class="compare-heading"><h2>Vending machines</h2>
+      {link('Compare full specifications', MACHINES + '#model-specs')}</div>
+      <div class="compare-pair">{''.join(cards)}</div></div></section>"""
+
+
 def make_pages():
+    make_catalogue(page)
     page('/', 'Vendvision | Vending Machines & Retail Media Malaysia',
          'Plan a vending machine advertising campaign with the Vendvision Brand Network or compare Malaysian smart vending machines and request a quotation.',
          f'''<section class="home-hero"><div class="wrap hero-grid"><div class="hero-copy">
@@ -148,7 +166,7 @@ def make_pages():
              ('Product placement', 'Put a suitable drink or snack on sale in a participating machine. Confirm pack fit, temperature and restocking.', link('Explore product placement', ADS + '#formats')),
              ('Combined campaigns', 'Show the campaign and stock the featured product at the same machine so shoppers can buy on the spot.', link('See a campaign example', ADS + '#example'))
          ], ('creative-studio.webp', 'pack-fit.webp', 'collection.webp'))) +
-         section('Find your next machine.', '<p>Compare the V22 and 50SP to find the right fit for your products, payment setup and floor space.</p>' + button('Compare vending machines', MACHINES) + '<figure class="catalogue-shot"><img src="/assets/side-touchscreen.webp" loading="lazy" width="456" height="640" alt="Side touchscreen vending machine with a glass product display"></figure>', 'brand-band') +
+         machine_comparison() +
          section('Work with Vendvision', cards([
              ('Vending operators', 'Put existing machines forward for campaign review.', link('Check machine eligibility', '/operators/')),
              ('Locations and corporate pantries', 'Submit a property or request an office pantry proposal.', link('Explore location options', '/locations/')),
@@ -190,22 +208,21 @@ def make_pages():
         ('Refrigeration', 'temperature'), ('Payment options', 'payment')
     ]
     rows = ''.join(f'<tr><th scope="row">{label}</th>' + ''.join(f'<td>{escape(str(m[key]))}</td>' for m in models) + '</tr>' for label, key in specs)
-    images = '''<figure class="model-photo"><img src="/assets/side-touchscreen.webp" width="456" height="640"
+    images = '''<figure class="model-photo"><img src="/assets/v22-reference.png" width="1120" height="1400"
         loading="lazy" alt="Vendvision catalogue machine with visible product rows and a side touchscreen">
         <figcaption>Visible products and side touchscreen</figcaption></figure>
-        <figure class="model-photo"><img src="/assets/full-touchscreen.webp" width="598" height="609"
+        <figure class="model-photo"><img src="/assets/50sp-vendvision.webp" width="598" height="609"
         loading="lazy" alt="Vendvision catalogue machine with full-front touchscreen, shown from two angles">
         <figcaption>Full-front touchscreen</figcaption></figure>'''
-    offers = ''.join(f'<p><strong>{m["name"]}</strong> · RM {m["offer"]["amount"]:,.0f} · {escape(m["offer"]["terms"])}</p>' for m in models if m['offer'] and m['offer'].get('approved') and m['offer'].get('valid_through', '') >= date.today().isoformat())
     page(MACHINES, 'Vending Machines Malaysia | Models & Quotations | Vendvision',
          'Compare Vendvision V22 and 50SP vending machines in Malaysia, including capacity, dimensions, refrigeration and payment options. Request an itemised quote.',
          intro('Machine supply & support', 'Smart vending machines in Malaysia',
                'Compare two touchscreen models for drinks and snacks. Tell us what you plan to sell and where, and we’ll check the right configuration for your site.',
-               button('Request a machine quote', '#machine-quote'), image='full-touchscreen.webp') +
+               button('Browse the full catalogue', '/machines/') + ' ' + button('Request a quote', '#machine-quote', True), image='50sp-vendvision.webp') +
          section('Compare the V22 and 50SP', '<div class="model-grid">' + images + '</div>'
-                 '<div class="table-wrap" role="region" aria-label="Machine comparison" tabindex="0"><table><caption>Published specifications</caption>'
+                 '<div class="table-wrap" role="region" aria-label="Machine comparison" tabindex="0"><table id="model-specs"><caption>Published specifications</caption>'
                  f'<thead><tr><th scope="col">Specification</th>{headings}</tr></thead><tbody>{rows}</tbody></table></div>'
-                 '<p class="note">Actual capacity depends on pack size and tray layout. Confirm payment hardware, supported methods and configuration in your quote.</p>' + offers) +
+                 '<p class="note">Actual capacity depends on pack size and tray layout. Confirm payment hardware, supported methods and configuration in your quote.</p>') +
          section('What your quote covers', '<p>Ask for an itemised quotation showing the machine and tray configuration, payment hardware and processing setup, delivery and installation, onboarding, VendBI fees, warranty and servicing terms. Tell us if you want to discuss purchase or available financing terms.</p><p>For frozen products, coffee, assisted heating or other specialist applications, share the storage and dispensing requirements so we can check options.</p>', 'tint') +
          section('Aftersales service', '<p>Ask about preventive maintenance, remote diagnostics, onsite repair and parts. Share your postcode and model so we can confirm coverage and the support included in your plan.</p>' + link('Contact Vendvision for servicing', '/contact.html'), anchor='maintenance') +
          section('Guides for machine buyers', insight_links(['vending-machine-quote-checklist-malaysia',
