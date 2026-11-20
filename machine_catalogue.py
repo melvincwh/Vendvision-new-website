@@ -65,7 +65,7 @@ def grid(tiles):
 
 
 def catalogue_brand():
-    return '<div class="catalog-brand"><img src="/assets/vendvision-official-horizontal.svg" alt="Vendvision" loading="eager"></div>'
+    return '<div class="catalog-brand" style="display:flex;align-items:center;gap:.55rem;margin-bottom:1.5rem;color:#d8027c;font-size:1.35rem;font-weight:800;letter-spacing:-.045em"><img src="/assets/vendvision-official-mark.svg" alt="" aria-hidden="true" width="34" height="34" style="width:34px;height:34px;object-fit:contain">vendvision</div>'
 
 
 def crumb(path, label):
