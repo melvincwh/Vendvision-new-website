@@ -42,5 +42,5 @@
     "execution": "Check pack fit, screen access and availability with each operator. Agree artwork, campaign dates, starting stock and the restocking plan before booking.",
     "measurement": "Review available playback records, units sold and stockouts by participating machine for the agreed period."
   },
-  "production_delivery_path": null
+  "production_delivery_path": "/api/enquiries"
 }
