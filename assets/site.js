@@ -48,33 +48,74 @@ function enableMetaPixel() {
   metaPixelReady = true;
   metaTrack('PageView');
 }
-function setMetaConsent(value) {
-  try { localStorage.setItem(META_CONSENT_KEY, value); } catch {}
+const CLARITY_ID = 'gj29wj0mfe';
+const ANALYTICS_CONSENT_KEY = 'vendvision_analytics_consent_v1';
+let clarityStarted = false;
+function analyticsConsent() {
+  try { return localStorage.getItem(ANALYTICS_CONSENT_KEY); }
+  catch { return null; }
+}
+function enableClarity() {
+  if (!META_PRODUCTION || clarityStarted || analyticsConsent() !== 'granted') return;
+  clarityStarted = true;
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window,document,'clarity','script',CLARITY_ID);
+  // Clarity loads only after analytics opt-in. No PII is passed in custom events.
+  window.clarity('consentv2', { analytics_Storage: 'granted', ad_Storage: 'denied' });
+}
+function savePrivacy(analytics, marketing) {
+  const wasMarketing = metaConsent();
+  const wasAnalytics = analyticsConsent();
+  try {
+    localStorage.setItem(ANALYTICS_CONSENT_KEY, analytics ? 'granted' : 'denied');
+    localStorage.setItem(META_CONSENT_KEY, marketing ? 'granted' : 'denied');
+  } catch {}
   const notice = document.querySelector('[data-meta-consent]');
   if (notice) notice.hidden = true;
-  if (value === 'granted') enableMetaPixel();
-  // A revoked choice must take effect immediately. Reload to clear the
-  // current in-memory Pixel; never schedule another Pixel request on rejection.
-  if (value === 'denied' && metaPixelReady) location.reload();
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'vv_privacy_updated',
+    analytics_storage: analytics ? 'granted' : 'denied',
+    ad_storage: marketing ? 'granted' : 'denied'
+  });
+  if ((wasMarketing === 'granted' && !marketing) ||
+      (wasAnalytics === 'granted' && !analytics)) {
+    // Stop already-running optional scripts after consent withdrawal.
+    location.reload();
+    return;
+  }
+  if (marketing) enableMetaPixel();
+  if (analytics) enableClarity();
 }
 function displayMetaConsent() {
   if (!META_PRODUCTION) return;
   if (metaConsent() === 'granted') enableMetaPixel();
+  if (analyticsConsent() === 'granted') enableClarity();
   const notice = document.createElement('aside');
   notice.className = 'vv-privacy-choice';
   notice.setAttribute('data-meta-consent', '');
-  notice.setAttribute('aria-label', 'Optional Meta advertising cookies');
-  notice.innerHTML = '<div><strong>Optional advertising cookies</strong><p>Vendvision can use Meta Pixel to measure Facebook and Instagram ad visits and contact clicks. Choose whether to allow this optional tracking. You can change your choice anytime.</p><div class="vv-privacy-actions"><button type="button" data-meta-choice="denied">Reject optional</button><button type="button" data-meta-choice="granted">Accept optional</button></div></div>';
-  notice.hidden = metaConsent() !== null;
+  notice.setAttribute('aria-label', 'Vendvision privacy preferences');
+  notice.innerHTML = '<div><strong>Privacy preferences</strong><p>Choose optional website analytics (Microsoft Clarity) and marketing measurement (Meta Pixel). Essential website functions do not require these choices.</p><label class="vv-privacy-toggle"><input type="checkbox" data-vv-analytics> Analytics and session insights</label><label class="vv-privacy-toggle"><input type="checkbox" data-vv-marketing> Marketing measurement</label><div class="vv-privacy-actions"><button type="button" data-vv-reject>Reject optional</button><button type="button" data-vv-save>Save choices</button><button type="button" data-vv-accept>Accept all</button></div></div>';
+  notice.hidden = analyticsConsent() !== null && metaConsent() !== null;
   document.body.append(notice);
-  notice.querySelectorAll('[data-meta-choice]').forEach(button => {
-    button.addEventListener('click', () => setMetaConsent(button.dataset.metaChoice));
-  });
+  const a = notice.querySelector('[data-vv-analytics]');
+  const m = notice.querySelector('[data-vv-marketing]');
+  function sync() {
+    a.checked = analyticsConsent() === 'granted';
+    m.checked = metaConsent() === 'granted';
+  }
+  sync();
+  notice.querySelector('[data-vv-reject]').addEventListener('click', () => savePrivacy(false, false));
+  notice.querySelector('[data-vv-accept]').addEventListener('click', () => savePrivacy(true, true));
+  notice.querySelector('[data-vv-save]').addEventListener('click', () => savePrivacy(a.checked, m.checked));
   const settings = document.createElement('button');
   settings.type = 'button';
   settings.className = 'vv-privacy-settings';
-  settings.textContent = 'Advertising cookie settings';
-  settings.addEventListener('click', () => { notice.hidden = false; });
+  settings.textContent = 'Cookie and privacy settings';
+  settings.addEventListener('click', () => { sync(); notice.hidden = false; });
   document.querySelector('footer')?.append(settings);
 }
 if (document.readyState === 'loading') {
